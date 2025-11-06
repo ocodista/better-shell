@@ -4,16 +4,27 @@ One command to install a modern shell environment.
 
 ## Installation
 
+### macOS / Linux
+
 ```bash
 curl -fsSL https://shell.ocodista.com/install.sh | bash
 ```
 
-**Alternative:**
-```bash
-curl -fsSL https://raw.githubusercontent.com/ocodista/better-shell/main/install.sh | bash
+### Windows (PowerShell)
+
+```powershell
+irm https://shell.ocodista.com/install.ps1 | iex
 ```
 
-Automatically backs up existing configs to `~/.better-shell-backups/`.
+**Windows options:**
+- **WSL2** (recommended) - Full Linux experience with zsh, tmux, etc.
+- **Native** - PowerShell with fzf, eza, PSReadLine
+
+**Alternative URLs:**
+- Bash: `https://raw.githubusercontent.com/ocodista/better-shell/main/install.sh`
+- PowerShell: `https://raw.githubusercontent.com/ocodista/better-shell/main/install.ps1`
+
+Automatically backs up existing configs.
 
 ## What You Get
 
@@ -43,11 +54,28 @@ Automatically backs up existing configs to `~/.better-shell-backups/`.
 | [zsh-z](https://github.com/agkozak/zsh-z) | Directory jumper | [agkozak/zsh-z](https://github.com/agkozak/zsh-z) |
 | [FiraCode Nerd Font](https://www.nerdfonts.com/) | Font | [ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts) |
 
+### Windows Native Tools
+
+| Tool | Purpose | Repository |
+|------|---------|------------|
+| [PowerShell](https://github.com/PowerShell/PowerShell) | Shell | [PowerShell/PowerShell](https://github.com/PowerShell/PowerShell) |
+| [Scoop](https://scoop.sh/) | Package manager | [ScoopInstaller/Scoop](https://github.com/ScoopInstaller/Scoop) |
+| [PSReadLine](https://github.com/PowerShell/PSReadLine) | Auto-suggestions | [PowerShell/PSReadLine](https://github.com/PowerShell/PSReadLine) |
+| [posh-git](https://github.com/dahlbyk/posh-git) | Git integration | [dahlbyk/posh-git](https://github.com/dahlbyk/posh-git) |
+| [Terminal-Icons](https://github.com/devblackops/Terminal-Icons) | File icons | [devblackops/Terminal-Icons](https://github.com/devblackops/Terminal-Icons) |
+| [fzf](https://github.com/junegunn/fzf) | Fuzzy finder | [junegunn/fzf](https://github.com/junegunn/fzf) |
+| [eza](https://github.com/eza-community/eza) | ls replacement | [eza-community/eza](https://github.com/eza-community/eza) |
+
 ## Requirements
 
-- macOS or Linux
+### macOS / Linux
 - Git
 - Internet connection
+
+### Windows
+- PowerShell 5.1 or later
+- Internet connection
+- (Optional) WSL2 for full Linux experience
 
 ## Usage
 

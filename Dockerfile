@@ -6,7 +6,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Run better-shell installation
-RUN curl -fsSL https://raw.githubusercontent.com/ocodista/better-shell/main/install.sh | bash
+RUN curl -fsSL https://shell.ocodista.com/install.sh | bash
 
 # Set zsh as default shell
 CMD ["zsh"]

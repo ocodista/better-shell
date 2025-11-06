@@ -2,9 +2,22 @@ export default {
   async fetch(request) {
     const url = new URL(request.url);
 
-    // Redirect /install.sh to GitHub raw file
+    // Serve install.sh (bash)
     if (url.pathname === '/install.sh') {
       const scriptUrl = 'https://raw.githubusercontent.com/ocodista/better-shell/main/install.sh';
+      const response = await fetch(scriptUrl);
+      return new Response(response.body, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'public, max-age=300',
+        },
+      });
+    }
+
+    // Serve install.ps1 (PowerShell)
+    if (url.pathname === '/install.ps1') {
+      const scriptUrl = 'https://raw.githubusercontent.com/ocodista/better-shell/main/install.ps1';
       const response = await fetch(scriptUrl);
       return new Response(response.body, {
         status: 200,
@@ -50,14 +63,20 @@ export default {
         a:hover {
             text-decoration: underline;
         }
+        h3 {
+            margin-top: 30px;
+        }
     </style>
 </head>
 <body>
     <h1>better-shell</h1>
     <p>One command to install a modern shell environment.</p>
 
-    <h2>Installation</h2>
+    <h3>macOS / Linux</h3>
     <pre><code>curl -fsSL https://shell.ocodista.com/install.sh | bash</code></pre>
+
+    <h3>Windows (PowerShell)</h3>
+    <pre><code>irm https://shell.ocodista.com/install.ps1 | iex</code></pre>
 
     <p>
         <a href="https://github.com/ocodista/better-shell">View on GitHub</a>

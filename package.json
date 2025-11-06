@@ -1,0 +1,50 @@
+{
+  "name": "better-terminal",
+  "version": "1.0.0",
+  "description": "One-command terminal setup with zsh, oh-my-zsh, fzf, asdf, tmux, and more",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "better-terminal": "./dist/better-terminal"
+  },
+  "engines": {
+    "bun": ">=1.3.1"
+  },
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "dev": "bun --watch src/index.ts",
+    "build": "bun run build.ts",
+    "build:all": "bun run build.ts --all",
+    "test": "./tests/test-all.sh",
+    "test:quick": "./tests/quick-test.sh",
+    "test:ubuntu": "./tests/test-ubuntu.sh",
+    "test:alpine": "./tests/test-alpine.sh",
+    "test:ubuntu:dev": "./tests/test-ubuntu-interactive.sh",
+    "test:alpine:dev": "./tests/test-alpine-interactive.sh",
+    "test:integration": "bun run tests/integration/test-ubuntu.ts && bun run tests/integration/test-alpine.ts",
+    "test:integration:ubuntu": "bun run tests/integration/test-ubuntu.ts",
+    "test:integration:alpine": "bun run tests/integration/test-alpine.ts",
+    "check": "bun run src/index.ts check"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "keywords": [
+    "terminal",
+    "shell",
+    "zsh",
+    "oh-my-zsh",
+    "fzf",
+    "asdf",
+    "tmux",
+    "cli",
+    "developer-tools",
+    "bun"
+  ],
+  "author": "",
+  "license": "MIT"
+}

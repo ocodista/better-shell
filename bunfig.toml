@@ -1,0 +1,26 @@
+# Bun v1.3.1 configuration
+# https://bun.sh/docs/runtime/configuration
+
+[install]
+# Use isolated linker for better dependency isolation
+linker = "isolated"
+
+# Automatically run lifecycle scripts
+auto = true
+
+[test]
+# Root directory for tests
+root = "./tests"
+
+# Preload files before tests
+# preload = []
+
+# Coverage output directory
+coverageDir = "./coverage"
+
+# Test concurrency
+# concurrentTestGlob = ["**/integration/**/*.test.ts"]
+
+[run]
+# Shell to use for package.json scripts
+shell = "bun"

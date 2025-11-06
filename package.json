@@ -1,12 +1,12 @@
 {
-  "name": "better-terminal",
+  "name": "better-shell",
   "version": "1.0.0",
-  "description": "One-command terminal setup with zsh, oh-my-zsh, fzf, asdf, tmux, and more",
+  "description": "One-command shell setup with zsh, oh-my-zsh, fzf, asdf, tmux, and more",
   "module": "index.ts",
   "type": "module",
   "private": true,
   "bin": {
-    "better-terminal": "./dist/better-terminal"
+    "better-shell": "./dist/better-shell"
   },
   "engines": {
     "bun": ">=1.3.1"

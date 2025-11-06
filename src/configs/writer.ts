@@ -26,7 +26,7 @@ export const configWriter = {
       .replace(/T/, '-')
       .replace(/\..+/, '')
       .replace(/:/g, '');
-    return `${platform.homeDir}/.better-terminal-backups/${timestamp}`;
+    return `${platform.homeDir}/.better-shell-backups/${timestamp}`;
   },
 
   /**

@@ -11,9 +11,9 @@ echo ""
 # Detect architecture
 ARCH=$(uname -m)
 if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
-    LINUX_BINARY="dist/better-terminal-linux-arm64"
+    LINUX_BINARY="dist/better-shell-linux-arm64"
 else
-    LINUX_BINARY="dist/better-terminal-linux-amd64"
+    LINUX_BINARY="dist/better-shell-linux-amd64"
 fi
 
 # Check if executable exists
@@ -27,7 +27,7 @@ fi
 ./tests/prepare-binaries.sh
 
 # Container name
-CONTAINER_NAME="better-terminal-ubuntu-dev"
+CONTAINER_NAME="better-shell-ubuntu-dev"
 
 # Check if container already exists
 if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
@@ -60,13 +60,13 @@ if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
 fi
 
 echo "📦 Building Ubuntu test container..."
-docker build -f tests/ubuntu/Dockerfile -t better-terminal-ubuntu . -q
+docker build -f tests/ubuntu/Dockerfile -t better-shell-ubuntu . -q
 
 echo "🚀 Starting container in background..."
-docker run -d --name $CONTAINER_NAME better-terminal-ubuntu tail -f /dev/null
+docker run -d --name $CONTAINER_NAME better-shell-ubuntu tail -f /dev/null
 
-echo "⏳ Installing better-terminal in container..."
-docker exec $CONTAINER_NAME sudo ./better-terminal install
+echo "⏳ Installing better-shell in container..."
+docker exec $CONTAINER_NAME sudo ./better-shell install
 
 echo "📋 Copying configs to testuser..."
 docker exec $CONTAINER_NAME bash -c '
@@ -89,7 +89,7 @@ docker exec $CONTAINER_NAME bash -c '
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "✨ Container is running with better-terminal installed!"
+echo "✨ Container is running with better-shell installed!"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "Container name: $CONTAINER_NAME"

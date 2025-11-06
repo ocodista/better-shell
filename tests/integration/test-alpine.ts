@@ -10,13 +10,13 @@ console.log('🧪 Running Alpine Integration Test\n');
 try {
   // Build Docker image
   console.log('📦 Building Alpine test container...');
-  await $`docker build -f tests/alpine/Dockerfile -t better-terminal-alpine-test . -q`;
+  await $`docker build -f tests/alpine/Dockerfile -t better-shell-alpine-test . -q`;
   console.log('✓ Container built\n');
 
   // Run automated tests
   console.log('🚀 Running automated tests in container...');
   const result =
-    await $`docker run --rm --name better-terminal-alpine-autotest better-terminal-alpine-test /home/testuser/test-runner.sh`;
+    await $`docker run --rm --name better-shell-alpine-autotest better-shell-alpine-test /home/testuser/test-runner.sh`;
 
   console.log(result.stdout.toString());
 

@@ -19,27 +19,27 @@ const targets: BuildTarget[] = [
   {
     name: 'macOS Apple Silicon',
     target: 'bun-darwin-arm64',
-    outfile: './dist/better-terminal-darwin-arm64',
+    outfile: './dist/better-shell-darwin-arm64',
   },
   {
     name: 'macOS Intel',
     target: 'bun-darwin-x64',
-    outfile: './dist/better-terminal-darwin-x64',
+    outfile: './dist/better-shell-darwin-x64',
   },
   {
     name: 'Linux ARM64',
     target: 'bun-linux-arm64',
-    outfile: './dist/better-terminal-linux-arm64',
+    outfile: './dist/better-shell-linux-arm64',
   },
   {
     name: 'Linux x64',
     target: 'bun-linux-x64',
-    outfile: './dist/better-terminal-linux-x64',
+    outfile: './dist/better-shell-linux-x64',
   },
   {
     name: 'Windows x64',
     target: 'bun-windows-x64',
-    outfile: './dist/better-terminal-windows-x64.exe',
+    outfile: './dist/better-shell-windows-x64.exe',
   },
 ];
 
@@ -63,7 +63,7 @@ async function buildTarget(target: BuildTarget): Promise<boolean> {
 }
 
 async function buildCurrent(): Promise<void> {
-  console.log('🚀 Building better-terminal CLI');
+  console.log('🚀 Building better-shell CLI');
   console.log(`Version: ${VERSION}`);
 
   // Detect current platform
@@ -98,7 +98,7 @@ async function buildCurrent(): Promise<void> {
   if (success) {
     // Create a symlink for easier access (Unix-like systems only)
     if (platform !== 'win32') {
-      const symlinkPath = './dist/better-terminal';
+      const symlinkPath = './dist/better-shell';
       try {
         const filename = currentTarget.outfile.replace('./dist/', '');
         await $`ln -sf ${filename} ${symlinkPath}`;
@@ -116,7 +116,7 @@ async function buildCurrent(): Promise<void> {
 }
 
 async function buildAll(): Promise<void> {
-  console.log('🚀 Building better-terminal CLI for all platforms');
+  console.log('🚀 Building better-shell CLI for all platforms');
   console.log(`Version: ${VERSION}`);
 
   // Create dist directory

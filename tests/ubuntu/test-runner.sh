@@ -7,9 +7,9 @@ set -e
 echo "🧪 Running Integration Tests in Ubuntu Container"
 echo ""
 
-# Install better-terminal with sudo
-echo "📦 Installing better-terminal..."
-sudo ./better-terminal install
+# Install better-shell with sudo
+echo "📦 Installing better-shell..."
+sudo ./better-shell install
 
 echo ""
 echo "✓ Installation completed"

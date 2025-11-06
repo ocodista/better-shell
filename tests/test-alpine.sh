@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# Test better-terminal on Alpine Linux
+# Test better-shell on Alpine Linux
 
 set -e
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🏔️  Testing better-terminal on Alpine Linux 3.19"
+echo "🏔️  Testing better-shell on Alpine Linux 3.19"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
 # Detect architecture
 ARCH=$(uname -m)
 if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
-    LINUX_BINARY="dist/better-terminal-linux-arm64"
+    LINUX_BINARY="dist/better-shell-linux-arm64"
 else
-    LINUX_BINARY="dist/better-terminal-linux-amd64"
+    LINUX_BINARY="dist/better-shell-linux-amd64"
 fi
 
 # Check if executable exists
@@ -28,7 +28,7 @@ fi
 ./tests/prepare-binaries.sh
 
 echo "📦 Building Alpine test container..."
-docker build -f tests/alpine/Dockerfile -t better-terminal-alpine .
+docker build -f tests/alpine/Dockerfile -t better-shell-alpine .
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -37,9 +37,9 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 echo "Quick start:"
 echo "  ./install-and-test.sh             - Install and launch improved shell ⭐"
-echo "  ./better-terminal install --dry-run  - Preview installation"
+echo "  ./better-shell install --dry-run  - Preview installation"
 echo "  exit                              - Exit container"
 echo ""
 
 # Run interactive container
-docker run --rm -it --name better-terminal-alpine-test better-terminal-alpine
+docker run --rm -it --name better-shell-alpine-test better-shell-alpine

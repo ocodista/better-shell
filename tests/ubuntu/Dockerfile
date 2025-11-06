@@ -1,4 +1,4 @@
-# Ubuntu test environment for better-terminal
+# Ubuntu test environment for better-shell
 # Use platform-specific image
 FROM --platform=$TARGETPLATFORM ubuntu:22.04
 
@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
     vim \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a test user (better-terminal shouldn't run as root)
+# Create a test user (better-shell shouldn't run as root)
 RUN useradd -m -s /bin/bash testuser && \
     echo "testuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
@@ -28,14 +28,14 @@ WORKDIR /home/testuser
 
 # Copy the appropriate architecture binary
 # TARGETARCH is set by Docker (amd64 or arm64)
-COPY --chown=testuser:testuser dist/better-terminal-linux-${TARGETARCH} /home/testuser/better-terminal
+COPY --chown=testuser:testuser dist/better-shell-linux-${TARGETARCH} /home/testuser/better-shell
 
 # Copy helper scripts
 COPY --chown=testuser:testuser tests/install-and-test.sh /home/testuser/install-and-test.sh
 COPY --chown=testuser:testuser tests/ubuntu/test-runner.sh /home/testuser/test-runner.sh
 
 # Make executables
-RUN chmod +x /home/testuser/better-terminal /home/testuser/install-and-test.sh /home/testuser/test-runner.sh
+RUN chmod +x /home/testuser/better-shell /home/testuser/install-and-test.sh /home/testuser/test-runner.sh
 
 # Default command: run check, show instructions, open shell
-CMD ["/bin/bash", "-c", "./better-terminal check && echo '\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n✨ Ubuntu 22.04 Test Environment Ready!\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nQuick start:\n  ./test-runner.sh         - Run automated integration tests ✅\n  ./install-and-test.sh    - Install and launch improved shell\n  ./better-terminal install --dry-run  - Preview installation\n  exit                     - Leave container\n' && exec /bin/bash"]
+CMD ["/bin/bash", "-c", "./better-shell check && echo '\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n✨ Ubuntu 22.04 Test Environment Ready!\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nQuick start:\n  ./test-runner.sh         - Run automated integration tests ✅\n  ./install-and-test.sh    - Install and launch improved shell\n  ./better-shell install --dry-run  - Preview installation\n  exit                     - Leave container\n' && exec /bin/bash"]

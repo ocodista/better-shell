@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# Test better-terminal on Ubuntu
+# Test better-shell on Ubuntu
 
 set -e
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🐧 Testing better-terminal on Ubuntu 22.04"
+echo "🐧 Testing better-shell on Ubuntu 22.04"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
 # Detect architecture
 ARCH=$(uname -m)
 if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
-    LINUX_BINARY="dist/better-terminal-linux-arm64"
+    LINUX_BINARY="dist/better-shell-linux-arm64"
 else
-    LINUX_BINARY="dist/better-terminal-linux-amd64"
+    LINUX_BINARY="dist/better-shell-linux-amd64"
 fi
 
 # Check if executable exists
@@ -28,7 +28,7 @@ fi
 ./tests/prepare-binaries.sh
 
 echo "📦 Building Ubuntu test container..."
-docker build -f tests/ubuntu/Dockerfile -t better-terminal-ubuntu .
+docker build -f tests/ubuntu/Dockerfile -t better-shell-ubuntu .
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -37,9 +37,9 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 echo "Quick start:"
 echo "  ./install-and-test.sh             - Install and launch improved shell ⭐"
-echo "  ./better-terminal install --dry-run  - Preview installation"
+echo "  ./better-shell install --dry-run  - Preview installation"
 echo "  exit                              - Exit container"
 echo ""
 
 # Run interactive container
-docker run --rm -it --name better-terminal-ubuntu-test better-terminal-ubuntu
+docker run --rm -it --name better-shell-ubuntu-test better-shell-ubuntu

@@ -9,7 +9,7 @@ echo "🚀 End-to-End Deployment Test"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-CONTAINER_NAME="better-terminal-e2e-test"
+CONTAINER_NAME="better-shell-e2e-test"
 
 # Clean up any existing test container
 if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
@@ -26,7 +26,7 @@ docker exec $CONTAINER_NAME bash -c "apt-get update -qq && apt-get install -y -q
 echo "🌐 Running deployed install script..."
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-docker exec $CONTAINER_NAME bash -c "curl -fsSL https://raw.githubusercontent.com/ocodista/better-terminal/main/install.sh | bash"
+docker exec $CONTAINER_NAME bash -c "curl -fsSL https://raw.githubusercontent.com/ocodista/better-shell/main/install.sh | bash"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 

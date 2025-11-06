@@ -1,13 +1,13 @@
 #!/bin/bash
-# Helper script to install better-terminal and launch the improved shell
+# Helper script to install better-shell and launch the improved shell
 
-echo "🚀 Installing better-terminal..."
+echo "🚀 Installing better-shell..."
 echo ""
 
 # Run installation with sudo on Linux (needed for package installation)
 if [ "$(uname)" = "Linux" ] && [ "$EUID" -ne 0 ]; then
     echo "ℹ Running with sudo for package installation..."
-    sudo ./better-terminal install
+    sudo ./better-shell install
 
     # Copy configs from root to current user if installation was run with sudo
     if [ $? -eq 0 ] && [ -f /root/.zshrc ]; then
@@ -35,7 +35,7 @@ if [ "$(uname)" = "Linux" ] && [ "$EUID" -ne 0 ]; then
         echo "✓ Configs copied and paths fixed"
     fi
 else
-    ./better-terminal install
+    ./better-shell install
 fi
 
 # Check if installation succeeded

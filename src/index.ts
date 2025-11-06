@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 
 /**
- * better-terminal CLI
- * One-command terminal setup with zsh, oh-my-zsh, fzf, asdf, tmux, and more
+ * better-shell CLI
+ * One-command shell setup with zsh, oh-my-zsh, fzf, asdf, tmux, and more
  */
 
 import { parseArgs } from 'node:util';
@@ -22,12 +22,12 @@ function getHelpText(): string {
   const dim = '\x1b[2m';
 
   return `
-${bright}better-terminal${reset} v${VERSION}
+${bright}better-shell${reset} v${VERSION}
 
-One-command terminal setup with zsh, oh-my-zsh, fzf, asdf, tmux, and more.
+One-command shell setup with zsh, oh-my-zsh, fzf, asdf, tmux, and more.
 
 ${bright}USAGE:${reset}
-  better-terminal <command> [options]
+  better-shell <command> [options]
 
 ${bright}COMMANDS:${reset}
   ${cyan}install${reset}               Install and configure everything
@@ -44,13 +44,13 @@ ${bright}OPTIONS:${reset}
   --help, -h           Show this help
 
 ${bright}EXAMPLES:${reset}
-  better-terminal install
-  better-terminal install --skip-backup
-  better-terminal install --dry-run
-  better-terminal check
-  better-terminal backup
-  better-terminal backup ~/my-backups
-  better-terminal restore ~/.better-terminal-backups/2024-01-01-120000
+  better-shell install
+  better-shell install --skip-backup
+  better-shell install --dry-run
+  better-shell check
+  better-shell backup
+  better-shell backup ~/my-backups
+  better-shell restore ~/.better-shell-backups/2024-01-01-120000
 
 ${bright}FEATURES:${reset}
   ✓ Auto-suggestions as you type
@@ -92,7 +92,7 @@ async function main() {
 
   // Show version
   if (values.version) {
-    console.log(`better-terminal v${VERSION}`);
+    console.log(`better-shell v${VERSION}`);
     process.exit(0);
   }
 
@@ -125,7 +125,7 @@ async function main() {
         const backupPath = positionals[1];
         if (!backupPath) {
           logger.error('Backup path is required');
-          logger.info('Usage: better-terminal restore <backup-path>');
+          logger.info('Usage: better-shell restore <backup-path>');
           process.exit(1);
         }
         const success = await restore(backupPath);
@@ -134,7 +134,7 @@ async function main() {
 
       default:
         logger.error(`Unknown command: ${command}`);
-        logger.info('Run "better-terminal --help" for usage information');
+        logger.info('Run "better-shell --help" for usage information');
         process.exit(1);
     }
   } catch (error) {

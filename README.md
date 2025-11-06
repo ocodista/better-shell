@@ -1,33 +1,25 @@
-# better-terminal
+# better-shell
 
-One command installs a complete terminal setup with auto-suggestions, fast search, and version management.
+One command installs a complete shell setup with auto-suggestions, fast search, and version management.
 
 ## Installation
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ocodista/better-terminal/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ocodista/better-shell/main/install.sh | bash
 ```
 
 Installs in 5-10 minutes. Backs up existing configs automatically.
 
 ## What You Get
-
 **Auto-suggestions**: Type a command. See suggestions from your history. Press → to accept.
-
 **Fast search**: Press Ctrl+R. Find any command instantly.
-
 **Syntax highlighting**: Valid commands turn green. Invalid turn red.
-
 **Directory jumping**: `z projects` jumps to your projects folder. No full paths needed.
-
 **File icons**: `lsx` lists files with colors and icons.
-
 **Version management**: Switch Node.js versions with `asdf`.
-
 **Terminal splits**: Run multiple commands in one window with `tmux`.
 
 ## Requirements
-
 - macOS or Linux
 - Git installed
 - Internet connection
@@ -83,26 +75,26 @@ Edit these files to customize:
 - `~/.tmux.conf` - Tmux settings
 - `~/.config/eza/tokyonight.yml` - File colors
 
-Backups are saved to `~/.better-terminal-backups/` before installation.
+Backups are saved to `~/.better-shell-backups/` before installation.
 
 ## Development
 
 ```bash
 # Clone and build
-git clone https://github.com/ocodista/better-terminal.git
-cd better-terminal
+git clone https://github.com/ocodista/better-shell.git
+cd better-shell
 bun install
 bun run build
 
 # Run
-./dist/better-terminal install
+./dist/better-shell install
 ```
 
 ### Test in Docker
 ```bash
 # Build and run with Dockerfile
-docker build -t better-terminal .
-docker run -it better-terminal
+docker build -t better-shell .
+docker run -it better-shell
 
 # Development tests
 ./tests/quick-test.sh
@@ -111,11 +103,11 @@ docker run -it better-terminal
 ## Commands
 
 ```bash
-better-terminal check          # Verify requirements
-better-terminal install        # Install everything
-better-terminal install --dry-run  # Preview changes
-better-terminal backup         # Save current configs
-better-terminal restore <path> # Restore from backup
+better-shell check          # Verify requirements
+better-shell install        # Install everything
+better-shell install --dry-run  # Preview changes
+better-shell backup         # Save current configs
+better-shell restore <path> # Restore from backup
 ```
 
 ## License

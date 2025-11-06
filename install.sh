@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install better-terminal from GitHub releases
+# Install better-shell from GitHub releases
 
 set -e
 
@@ -9,7 +9,7 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}🚀 better-terminal installer${NC}"
+echo -e "${BLUE}🚀 better-shell installer${NC}"
 echo ""
 
 # Detect OS
@@ -38,7 +38,7 @@ esac
 echo -e "Platform: ${GREEN}$OS-$ARCH${NC}"
 
 # Get latest release info
-REPO="ocodista/better-terminal"
+REPO="ocodista/better-shell"
 RELEASE_URL="https://api.github.com/repos/$REPO/releases/latest"
 
 echo "Fetching latest release..."
@@ -56,16 +56,16 @@ echo -e "Latest version: ${GREEN}$VERSION${NC}"
 
 # Construct download URL
 if [ "$OS" = "darwin" ]; then
-  BINARY_NAME="better-terminal-darwin-$ARCH"
+  BINARY_NAME="better-shell-darwin-$ARCH"
 else
-  BINARY_NAME="better-terminal-linux-$ARCH"
+  BINARY_NAME="better-shell-linux-$ARCH"
 fi
 
 DOWNLOAD_URL="https://github.com/$REPO/releases/download/$VERSION/$BINARY_NAME"
 
 # Download binary
 TMP_DIR=$(mktemp -d)
-TMP_FILE="$TMP_DIR/better-terminal"
+TMP_FILE="$TMP_DIR/better-shell"
 
 echo "Downloading..."
 if ! curl -fsSL "$DOWNLOAD_URL" -o "$TMP_FILE"; then

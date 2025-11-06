@@ -3,7 +3,7 @@
 
 set -e
 
-echo "🧪 better-terminal Interactive Test Suite"
+echo "🧪 better-shell Interactive Test Suite"
 echo ""
 echo "This will open interactive shells in Docker containers."
 echo "You can manually test the installation in each environment."
@@ -14,9 +14,9 @@ read
 # Detect architecture and build if needed
 ARCH=$(uname -m)
 if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
-    LINUX_BINARY="dist/better-terminal-linux-arm64"
+    LINUX_BINARY="dist/better-shell-linux-arm64"
 else
-    LINUX_BINARY="dist/better-terminal-linux-amd64"
+    LINUX_BINARY="dist/better-shell-linux-amd64"
 fi
 
 if [ ! -f "$LINUX_BINARY" ]; then

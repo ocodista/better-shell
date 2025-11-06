@@ -2,7 +2,10 @@
  * .tmux.conf template based on user's configuration
  */
 
-export const tmuxConfTemplate = `# New window/pane in current path
+export const tmuxConfTemplate = `# Default shell
+set-option -g default-shell /usr/bin/zsh
+
+# New window/pane in current path
 bind c new-window -c "#{pane_current_path}"
 bind '"' split-window -c "#{pane_current_path}"
 bind % split-window -h -c "#{pane_current_path}"

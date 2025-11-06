@@ -1,6 +1,18 @@
-# better-shell
+# Better Shell
+One command to install a modern shell environment.  
 
-One command to install a modern shell environment.
+It's 2025 and the default shell still look like a 1970's command prompt, this script brings life to your terminal.
+
+## What You Get
+
+- **Auto-suggestions** - [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
+- **Fast search** - [fzf](https://github.com/junegunn/fzf) (Ctrl+R)
+- **Syntax highlighting** - [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
+- **Directory jumping** - [zsh-z](https://github.com/agkozak/zsh-z)
+- **Modern ls** - [eza](https://github.com/eza-community/eza)
+- **Version manager** - [asdf](https://github.com/asdf-vm/asdf)
+- **Terminal multiplexer** - [tmux](https://github.com/tmux/tmux)
+- **Programming font** - [FiraCode Nerd Font](https://github.com/ryanoasis/nerd-fonts)
 
 ## Installation
 
@@ -25,17 +37,6 @@ irm https://shell.ocodista.com/install.ps1 | iex
 - PowerShell: `https://raw.githubusercontent.com/ocodista/better-shell/main/install.ps1`
 
 Automatically backs up existing configs.
-
-## What You Get
-
-- **Auto-suggestions** - [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
-- **Fast search** - [fzf](https://github.com/junegunn/fzf) (Ctrl+R)
-- **Syntax highlighting** - [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
-- **Directory jumping** - [zsh-z](https://github.com/agkozak/zsh-z)
-- **Modern ls** - [eza](https://github.com/eza-community/eza)
-- **Version manager** - [asdf](https://github.com/asdf-vm/asdf)
-- **Terminal multiplexer** - [tmux](https://github.com/tmux/tmux)
-- **Programming font** - [FiraCode Nerd Font](https://github.com/ryanoasis/nerd-fonts)
 
 ## Tools Installed
 

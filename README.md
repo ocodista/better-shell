@@ -100,11 +100,12 @@ bun run build
 
 ### Test in Docker
 ```bash
-# Quick test (Ubuntu)
-./tests/quick-test.sh
+# Build and run with Dockerfile
+docker build -t better-terminal .
+docker run -it better-terminal
 
-# Inside container
-./install-and-test.sh
+# Development tests
+./tests/quick-test.sh
 ```
 
 ## Commands

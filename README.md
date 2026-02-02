@@ -152,6 +152,7 @@ Edit these files:
 - `~/.tmux.conf` - Tmux settings
 - `~/.config/eza/tokyonight.yml` - File colors
 - `~/.antigenrc` - Zsh plugins
+- `~/.ssh/config` - SSH defaults (keep-alive, connection reuse, security)
 
 Backups saved to `~/.better-shell-backups/YYYY-MM-DD-HHMMSS`.
 

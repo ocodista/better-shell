@@ -8,8 +8,6 @@ import { zshrcTemplate } from './templates/zshrc';
 import { antigenrcTemplate } from './templates/antigenrc';
 import { tmuxConfTemplate } from './templates/tmux.conf';
 import { ezaTokyonightTemplate } from './templates/eza-tokyonight';
-import { sshConfigTemplate } from './templates/ssh-config';
-import { shell } from '../utils/shell';
 
 export interface BackupResult {
   success: boolean;
@@ -46,7 +44,6 @@ export const configWriter = {
       `${platform.homeDir}/.antigenrc`,
       `${platform.homeDir}/.tmux.conf`,
       `${platform.homeDir}/.config/eza/tokyonight.yml`,
-      `${platform.homeDir}/.ssh/config`,
     ];
 
     const backedUp: string[] = [];
@@ -107,16 +104,6 @@ export const configWriter = {
       await Bun.write(`${ezaConfigDir}/tokyonight.yml`, ezaTokyonightTemplate);
       logger.success('Written ~/.config/eza/tokyonight.yml');
 
-      // Write SSH config
-      const sshDir = `${platform.homeDir}/.ssh`;
-      const sshSocketsDir = `${sshDir}/sockets`;
-      await Bun.write(`${sshSocketsDir}/.keep`, ''); // Create ~/.ssh/sockets/
-      await Bun.write(`${sshDir}/config`, sshConfigTemplate);
-      await shell.exec(`chmod 700 ${sshDir}`, { silent: true });
-      await shell.exec(`chmod 700 ${sshSocketsDir}`, { silent: true });
-      await shell.exec(`chmod 644 ${sshDir}/config`, { silent: true });
-      logger.success('Written ~/.ssh/config');
-
       return true;
     } catch (error) {
       logger.error(`Failed to write configs: ${error}`);
@@ -134,7 +121,6 @@ export const configWriter = {
         '.antigenrc',
         '.tmux.conf',
         '.config/eza/tokyonight.yml',
-        '.ssh/config',
       ];
 
       for (const file of files) {

@@ -24,7 +24,7 @@ curl -fsSL https://shell.ocodista.com/install.sh | bash
 
 ### Linux
 
-The installer needs root privileges to install packages (zsh, tmux, etc.) and change your default shell.
+**Important:** You must use `sudo` for Linux. The installer needs root privileges to install packages (zsh, tmux, etc.) and change your default shell.
 
 ```bash
 curl -fsSL https://shell.ocodista.com/install.sh | sudo bash
@@ -159,11 +159,17 @@ Backups saved to `~/.better-shell-backups/YYYY-MM-DD-HHMMSS`.
 
 ### Permission denied on Linux
 
-The installer needs root privileges to install packages and change your default shell. Use `sudo`:
+**All Linux installations require `sudo`.** The installer needs root privileges to:
+- Install packages via your package manager (apt, dnf, etc.)
+- Change your default shell using `chsh`
+
+Always use:
 
 ```bash
 curl -fsSL https://shell.ocodista.com/install.sh | sudo bash
 ```
+
+If you see permission errors without sudo, retry with the command above.
 
 ### Zsh is not my default shell after installation
 

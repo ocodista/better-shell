@@ -48,6 +48,17 @@ export const platform = {
   },
 
   get homeDir(): string {
+    // When running with sudo, get the actual user's home directory
+    if (process.env.SUDO_USER) {
+      const sudoUser = process.env.SUDO_USER;
+      const { execSync } = require('child_process');
+      try {
+        return execSync(`eval echo ~${sudoUser}`, { encoding: 'utf-8' }).trim();
+      } catch {
+        // Fallback to environment variables if eval fails
+        return process.env.HOME || process.env.USERPROFILE || '~';
+      }
+    }
     return process.env.HOME || process.env.USERPROFILE || '~';
   },
 

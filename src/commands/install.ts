@@ -33,10 +33,15 @@ export const install = async (options: InstallOptions = {}): Promise<boolean> =>
     logger.newline();
   }
 
-  // Check if running as root
+  // Check if running as root (expected when using sudo)
   if (shell.isRoot()) {
-    logger.warn('Running as root. This may cause permission issues.');
-    logger.info('Consider running without sudo/root privileges.');
+    const sudoUser = process.env.SUDO_USER;
+    if (sudoUser) {
+      logger.info(`Installing for user: ${sudoUser}`);
+    } else {
+      logger.warn('Running as root. Config files will be installed to /root.');
+      logger.info('To install for a specific user, run: sudo -u username better-shell install');
+    }
     logger.newline();
   }
 

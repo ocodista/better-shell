@@ -1,0 +1,38 @@
+# Pre-baked image used by the README demo recordings.
+# Contains ubuntu:22.04 with better-shell already installed so that
+# demo/ubuntu-after.tape can launch instantly instead of re-running the
+# installer on every render.
+#
+# Build:  docker build -f demo/Dockerfile.demo -t bs-demo:installed demo/
+# Run:    docker run --rm -it bs-demo:installed
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8 \
+    TERM=xterm-256color
+
+RUN apt-get update -qq \
+ && apt-get install -y -qq curl sudo ca-certificates git locales \
+ && locale-gen en_US.UTF-8 \
+ && rm -rf /var/lib/apt/lists/*
+
+# Run the real installer end-to-end, exactly as a user would
+RUN curl -fsSL https://shell.ocodista.com/install.sh | bash
+
+# Warm antigen so plugins are pre-downloaded at image-build time, not
+# printed as progress output the first time the user opens the shell
+RUN zsh -i -c 'true' 2>/dev/null || true
+
+# Seed a small sandbox so ls / z / pwd have something interesting to show
+RUN mkdir -p /root/sandbox/src /root/sandbox/tests \
+             /root/projects/awesome-blog \
+             /root/projects/cool-project \
+             /root/projects/playground \
+ && echo '# Sample Project' > /root/sandbox/README.md \
+ && echo '{ "name": "sample" }' > /root/sandbox/package.json \
+ && echo 'export const greet = (n: string) => `Hello, ${n}!`;' > /root/sandbox/src/index.ts \
+ && echo 'node_modules' > /root/sandbox/.gitignore
+
+WORKDIR /root/sandbox
+CMD ["/usr/bin/zsh"]

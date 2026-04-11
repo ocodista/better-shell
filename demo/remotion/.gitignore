@@ -1,0 +1,3 @@
+# Remotion's staticFile() needs assets under public/, but we stage them
+# from demo/*.gif at render time — no need to commit duplicates.
+public/

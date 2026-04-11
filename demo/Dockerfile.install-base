@@ -1,0 +1,21 @@
+# Prereqs-only base image used by demo/install.tape.
+# The better-shell installer requires curl, sudo, git, and ca-certificates to
+# be present. On a bare ubuntu:22.04 image those installs take ~18s of noisy
+# apt-get output — too long and too ugly to hide inside the recording. So we
+# bake them into a dedicated image and run the one-liner on top of that.
+#
+# Build: docker build -f demo/Dockerfile.install-base -t bs-demo:installbase demo/
+# Run:   docker run --rm -it bs-demo:installbase
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8 \
+    TERM=xterm-256color
+
+RUN apt-get update -qq \
+ && apt-get install -y -qq curl sudo ca-certificates git \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /root
+CMD ["/bin/bash"]

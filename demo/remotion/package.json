@@ -1,0 +1,21 @@
+{
+  "name": "better-shell-remotion-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Remotion project that overlays caption annotations on top of the VHS-recorded ubuntu-after.gif.",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render AnnotatedAfter ../ubuntu-after-annotated.gif --codec=gif"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@remotion/gif": "^4.0.448",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.1",
+    "typescript": "^5.5.0"
+  }
+}

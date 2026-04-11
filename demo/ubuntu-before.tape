@@ -7,11 +7,12 @@ Output demo/ubuntu-before.gif
 Require docker
 
 Set Shell "bash"
+Set FontFamily "FiraCode Nerd Font Mono"
 Set FontSize 20
 Set Width 950
 Set Height 560
 Set Padding 28
-Set Theme "Github"
+Set Theme "Dracula"
 Set TypingSpeed 55ms
 Set PlaybackSpeed 1.0
 Set WindowBar "Colorful"

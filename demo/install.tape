@@ -11,6 +11,7 @@ Output demo/install.gif
 Require docker
 
 Set Shell "bash"
+Set FontFamily "FiraCode Nerd Font Mono"
 Set FontSize 20
 Set Width 1100
 Set Height 620

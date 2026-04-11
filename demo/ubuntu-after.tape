@@ -7,6 +7,7 @@ Output demo/ubuntu-after.gif
 Require docker
 
 Set Shell "bash"
+Set FontFamily "FiraCode Nerd Font Mono"
 Set FontSize 20
 Set Width 950
 Set Height 560

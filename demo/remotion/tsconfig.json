@@ -7,8 +7,7 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "lib": ["DOM", "ES2020"],
-    "types": ["node"]
+    "lib": ["DOM", "ES2020"]
   },
   "include": ["src"]
 }

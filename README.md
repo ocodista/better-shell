@@ -5,7 +5,11 @@ The default shell still looks like a 1970s command prompt. This script brings yo
 
 ## Demo
 
-**Before vs. after**, recorded side-by-side in two fresh `ubuntu:22.04` containers:
+**Feature tour**, recorded in a fresh `ubuntu:22.04` container and annotated with captions for each feature as it fires:
+
+![Annotated feature tour — modern ls, autojump, fuzzy history, tab completion, syntax highlighting](demo/ubuntu-after-annotated.gif)
+
+**Side-by-side**, plain bash vs. better-shell, same theme both sides so the delta is just the features:
 
 ![Plain bash on the left, better-shell on the right](demo/ubuntu-side-by-side.gif)
 
@@ -15,7 +19,7 @@ On the left: plain `bash` — no colors, no tab completion for git subcommands, 
 
 ![Installing better-shell with a single curl pipe](demo/install.gif)
 
-See [`demo/`](demo/) for the VHS tape files and Dockerfiles used to regenerate these recordings.
+See [`demo/`](demo/) for the VHS tape files, Dockerfiles, and Remotion project used to regenerate these recordings.
 
 ## What You Get
 
@@ -233,6 +237,13 @@ docker build -f demo/Dockerfile.demo -t bs-demo:installed demo/
 vhs demo/ubuntu-before.tape   # → demo/ubuntu-before.gif (plain bash)
 vhs demo/ubuntu-after.tape    # → demo/ubuntu-after.gif  (better-shell)
 ./demo/build-side-by-side.sh  # → demo/ubuntu-side-by-side.gif
+
+# Annotated feature tour (Remotion overlays captions on top of ubuntu-after.gif)
+cd demo/remotion
+npm install
+mkdir -p public && cp ../ubuntu-after.gif public/ubuntu-after.gif
+npm run render                # → demo/ubuntu-after-annotated.gif
+cd -
 
 # One-liner install
 docker build -f demo/Dockerfile.install-base -t bs-demo:installbase demo/

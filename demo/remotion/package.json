@@ -2,18 +2,18 @@
   "name": "better-shell-remotion-demo",
   "version": "1.0.0",
   "private": true,
-  "description": "Remotion project that renders the before/after README demo GIFs.",
+  "description": "Remotion project that overlays caption annotations on top of the VHS-recorded ubuntu-after.gif.",
   "scripts": {
     "studio": "remotion studio",
-    "render:before": "remotion render Before ../before-remotion.gif --codec=gif",
-    "render:after": "remotion render After ../after-remotion.gif --codec=gif"
+    "render": "remotion render AnnotatedAfter ../ubuntu-after-annotated.gif --codec=gif"
   },
   "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@remotion/gif": "^4.0.448",
+    "@remotion/google-fonts": "^4.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "remotion": "^4.0.0",
-    "@remotion/cli": "^4.0.0",
-    "@remotion/google-fonts": "^4.0.0"
+    "remotion": "^4.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.1",

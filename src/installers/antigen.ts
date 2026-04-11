@@ -18,7 +18,7 @@ export const installAntigen = async (): Promise<boolean> => {
   }
 
   // Download Antigen
-  const antigenUrl = 'https://git.io/antigen';
+  const antigenUrl = 'https://raw.githubusercontent.com/zsh-users/antigen/master/bin/antigen.zsh';
 
   try {
     const success = await shell.download(antigenUrl, antigenPath);

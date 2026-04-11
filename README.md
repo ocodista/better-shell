@@ -3,6 +3,20 @@ One command to install a modern shell environment.
 
 The default shell still looks like a 1970s command prompt. This script brings your terminal to life.
 
+## Demo
+
+**Before vs. after**, recorded side-by-side in two fresh `ubuntu:22.04` containers:
+
+![Plain bash on the left, better-shell on the right](demo/ubuntu-side-by-side.gif)
+
+On the left: plain `bash` — no colors, no tab completion for git subcommands, Ctrl+R is a primitive reverse-i-search. On the right: the same container after running the installer — `lsx` with icons, `z awesome` directory jumping, fzf Ctrl+R popup, and git subcommand completion.
+
+**One-liner install** against a fresh `ubuntu:22.04` container:
+
+![Installing better-shell with a single curl pipe](demo/install.gif)
+
+See [`demo/`](demo/) for the VHS tape files and Dockerfiles used to regenerate these recordings.
+
 ## What You Get
 
 - **Auto-suggestions** - [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
@@ -207,6 +221,22 @@ docker run -it better-shell
 
 ./tests/quick-test.sh
 bun run test
+```
+
+### Regenerating the demo GIFs
+
+The recordings in [`demo/`](demo/) are produced with [VHS](https://github.com/charmbracelet/vhs) running real Docker containers, so they always reflect the installer's actual output.
+
+```bash
+# Side-by-side before/after
+docker build -f demo/Dockerfile.demo -t bs-demo:installed demo/
+vhs demo/ubuntu-before.tape   # → demo/ubuntu-before.gif (plain bash)
+vhs demo/ubuntu-after.tape    # → demo/ubuntu-after.gif  (better-shell)
+./demo/build-side-by-side.sh  # → demo/ubuntu-side-by-side.gif
+
+# One-liner install
+docker build -f demo/Dockerfile.install-base -t bs-demo:installbase demo/
+vhs demo/install.tape         # → demo/install.gif
 ```
 
 ### Binaries

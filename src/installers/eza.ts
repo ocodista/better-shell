@@ -5,6 +5,7 @@
 import { shell } from '../utils/shell';
 import { logger } from '../utils/logger';
 import { platform } from '../utils/platform';
+import { installPackages } from '../utils/package-manager';
 
 export const installEza = async (): Promise<boolean> => {
   logger.step('Installing eza...');
@@ -15,11 +16,10 @@ export const installEza = async (): Promise<boolean> => {
     return true;
   }
 
-  // Install based on platform
   if (platform.isMac()) {
-    const result = await shell.exec('brew install eza', { silent: false });
+    const success = await installPackages(['eza'], { silent: false });
 
-    if (result.success) {
+    if (success) {
       logger.success('eza installed successfully');
       return true;
     }
@@ -41,10 +41,9 @@ export const installEza = async (): Promise<boolean> => {
         return true;
       }
 
-      // If not available, install via cargo or download binary
+      // If not available, install via downloaded binary
       logger.info('eza not in apt, trying alternative installation...');
 
-      // Install via downloaded binary
       const arch = platform.arch === 'arm64' ? 'aarch64' : 'x86_64';
       const url = `https://github.com/eza-community/eza/releases/latest/download/eza_${arch}-unknown-linux-gnu.tar.gz`;
       const tarPath = '/tmp/eza.tar.gz';
@@ -66,12 +65,12 @@ export const installEza = async (): Promise<boolean> => {
         logger.success('eza installed successfully');
         return true;
       }
-    } else if (pm === 'dnf') {
-      const result = await shell.exec('dnf install -y eza', { silent: false });
-      return result.success;
-    } else if (pm === 'pacman') {
-      const result = await shell.exec('pacman -S --noconfirm eza', { silent: false });
-      return result.success;
+    } else {
+      const success = await installPackages(['eza'], { silent: false });
+      if (success) {
+        logger.success('eza installed successfully');
+        return true;
+      }
     }
   }
 

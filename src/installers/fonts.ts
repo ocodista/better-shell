@@ -5,6 +5,7 @@
 import { shell } from '../utils/shell';
 import { logger } from '../utils/logger';
 import { platform } from '../utils/platform';
+import { getPackageInstallPlan } from '../utils/package-manager';
 
 export const installFiraCode = async (): Promise<boolean> => {
   logger.step('Installing FiraCode Nerd Font...');
@@ -51,9 +52,16 @@ export const installFiraCode = async (): Promise<boolean> => {
     }
 
     // Ensure fontconfig is installed (for fc-cache command)
-    const pkgManager = platform.packageManager;
-    if (pkgManager !== 'unknown') {
-      await shell.exec(`${pkgManager} install -y fontconfig`, {
+    const fontconfigPlan = getPackageInstallPlan(platform.packageManager, ['fontconfig']);
+    if (fontconfigPlan) {
+      if (fontconfigPlan.update) {
+        await shell.exec(fontconfigPlan.update, {
+          silent: true,
+          ignoreError: true,
+        });
+      }
+
+      await shell.exec(fontconfigPlan.install, {
         silent: true,
         ignoreError: true,
       });

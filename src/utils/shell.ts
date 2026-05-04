@@ -18,6 +18,39 @@ export interface ExecResult {
   exitCode: number;
 }
 
+const commandNamePattern = /^[a-zA-Z0-9._+/-]+$/;
+
+export const getShellCommandArgs = (
+  command: string,
+  currentPlatform: string = process.platform
+): string[] => {
+  if (currentPlatform === 'win32') {
+    return [
+      'powershell.exe',
+      '-NoLogo',
+      '-NoProfile',
+      '-NonInteractive',
+      '-Command',
+      command,
+    ];
+  }
+
+  return ['/bin/sh', '-c', command];
+};
+
+export const getCommandExistsCommand = (
+  command: string,
+  currentPlatform: string = process.platform
+): string | undefined => {
+  if (!commandNamePattern.test(command)) return undefined;
+
+  if (currentPlatform === 'win32') {
+    return `if (Get-Command '${command}' -ErrorAction SilentlyContinue) { exit 0 } else { exit 1 }`;
+  }
+
+  return `command -v '${command}' >/dev/null 2>&1`;
+};
+
 export const shell = {
   /**
    * Execute a shell command
@@ -30,7 +63,7 @@ export const shell = {
     }
 
     try {
-      const proc = Bun.spawn(command.split(' '), {
+      const proc = Bun.spawn(getShellCommandArgs(command), {
         cwd: cwd || process.cwd(),
         env: { ...process.env, ...env },
         stdout: 'pipe',
@@ -50,7 +83,7 @@ export const shell = {
 
       return { success, stdout, stderr, exitCode };
     } catch (error) {
-      if (!ignoreError) {
+      if (!ignoreError && !silent) {
         logger.error(`Failed to execute: ${command}`);
         logger.error(String(error));
       }
@@ -80,7 +113,10 @@ export const shell = {
    * Check if a command exists
    */
   commandExists: async (command: string): Promise<boolean> => {
-    const result = await shell.exec(`which ${command}`, { silent: true, ignoreError: true });
+    const lookupCommand = getCommandExistsCommand(command);
+    if (!lookupCommand) return false;
+
+    const result = await shell.exec(lookupCommand, { silent: true, ignoreError: true });
     return result.success;
   },
 

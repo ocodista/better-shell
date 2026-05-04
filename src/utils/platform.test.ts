@@ -1,5 +1,38 @@
 import { describe, expect, test } from 'bun:test';
-import { platform } from './platform';
+import { readdir } from 'node:fs/promises';
+import { isAbsolute } from 'node:path';
+import {
+  detectPackageManager,
+  normalizeArch,
+  normalizePlatform,
+  platform,
+} from './platform';
+
+const commandExistsFor = (commands: readonly string[]) => (command: string) =>
+  commands.includes(command);
+
+describe('platform normalization', () => {
+  test('maps supported Node platforms to installer platforms', () => {
+    expect(normalizePlatform('darwin')).toBe('macos');
+    expect(normalizePlatform('linux')).toBe('linux');
+    expect(normalizePlatform('win32')).toBe('windows');
+  });
+
+  test('marks unsupported platforms as unknown', () => {
+    expect(normalizePlatform('freebsd')).toBe('unknown');
+    expect(normalizePlatform('sunos')).toBe('unknown');
+  });
+
+  test('maps supported CPU architectures', () => {
+    expect(normalizeArch('x64')).toBe('x64');
+    expect(normalizeArch('arm64')).toBe('arm64');
+  });
+
+  test('marks unsupported CPU architectures as unknown', () => {
+    expect(normalizeArch('ia32')).toBe('unknown');
+    expect(normalizeArch('riscv64')).toBe('unknown');
+  });
+});
 
 describe('platform detection', () => {
   test('consistently identifies the same platform', () => {
@@ -52,37 +85,72 @@ describe('home directory', () => {
   test('returns an absolute path', () => {
     const home = platform.homeDir;
 
-    expect(home.startsWith('/')).toBe(true);
+    expect(isAbsolute(home)).toBe(true);
   });
 
-  test('allows reading directory contents', () => {
+  test('allows reading directory contents', async () => {
     const home = platform.homeDir;
 
-    const result = Bun.spawnSync(['ls', home]);
-    expect(result.exitCode).toBe(0);
+    await expect(readdir(home)).resolves.toBeDefined();
   });
 });
 
 describe('shell detection', () => {
-  test('returns an absolute path to a shell', () => {
-    const shell = platform.shell;
-
-    expect(shell.startsWith('/')).toBe(true);
+  test('returns a non-empty shell path', () => {
+    expect(platform.shell.length).toBeGreaterThan(0);
   });
 
-  test('identifies an executable shell', () => {
-    const shell = platform.shell;
+  test('identifies an executable shell on POSIX systems', () => {
+    if (platform.isWindows()) return;
 
-    const result = Bun.spawnSync(['test', '-x', shell]);
+    const result = Bun.spawnSync(['test', '-x', platform.shell]);
     expect(result.exitCode).toBe(0);
   });
 });
 
 describe('package manager detection', () => {
-  test('detects brew on macOS', () => {
-    if (platform.isMac()) {
-      expect(platform.packageManager).toBe('brew');
-    }
+  test('detects brew on macOS without probing commands', () => {
+    const commandExists = () => {
+      throw new Error('macOS should not probe Linux package managers');
+    };
+
+    expect(detectPackageManager('macos', commandExists)).toBe('brew');
+  });
+
+  test('detects apt on Debian and Ubuntu systems', () => {
+    const pm = detectPackageManager('linux', commandExistsFor(['apt-get']));
+
+    expect(pm).toBe('apt');
+  });
+
+  test('detects dnf on Fedora systems', () => {
+    const pm = detectPackageManager('linux', commandExistsFor(['dnf']));
+
+    expect(pm).toBe('dnf');
+  });
+
+  test('detects pacman on Arch systems', () => {
+    const pm = detectPackageManager('linux', commandExistsFor(['pacman']));
+
+    expect(pm).toBe('pacman');
+  });
+
+  test('detects apk on Alpine systems', () => {
+    const pm = detectPackageManager('linux', commandExistsFor(['apk']));
+
+    expect(pm).toBe('apk');
+  });
+
+  test('does not detect Unix package managers for native Windows', () => {
+    const pm = detectPackageManager('windows', commandExistsFor(['apt-get', 'apk', 'brew']));
+
+    expect(pm).toBe('unknown');
+  });
+
+  test('returns unknown when Linux has no supported package manager', () => {
+    const pm = detectPackageManager('linux', commandExistsFor([]));
+
+    expect(pm).toBe('unknown');
   });
 
   test('returns consistent package manager', () => {
@@ -92,10 +160,10 @@ describe('package manager detection', () => {
     expect(first).toBe(second);
   });
 
-  test('detects Linux package manager on Linux', () => {
+  test('detects a supported package manager on Linux', () => {
     if (platform.isLinux()) {
       const pm = platform.packageManager;
-      const validLinuxPMs = ['apt', 'dnf', 'pacman', 'unknown'];
+      const validLinuxPMs = ['apt', 'dnf', 'pacman', 'apk', 'unknown'];
 
       expect(validLinuxPMs).toContain(pm);
     }

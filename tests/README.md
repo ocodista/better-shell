@@ -11,13 +11,14 @@ Tests individual utility functions. Focus on behavior and real-world outcomes.
 
 ```bash
 bun test
+bun run test:unit
 bun test --coverage
 ```
 
 ### Integration Tests
 Location: `tests/integration/`
 
-Verify complete installation in Docker containers.
+Verify complete installation in Docker containers. These scripts build release binaries first. Ubuntu uses glibc Linux binaries; Alpine uses musl Linux binaries.
 
 ```bash
 bun run test:integration
@@ -68,6 +69,9 @@ test('sets internal _state property', () => {
 ## Test Categories
 
 ### Platform Detection
+- Normalizes macOS, Linux, Windows, and unknown platforms
+- Normalizes x64, arm64, and unknown architectures
+- Detects package managers for Homebrew, apt, dnf, pacman, and apk
 - Detects same platform/arch across calls
 - Matches platform helpers to detected platform
 - Verifies home directory exists and is readable
@@ -81,10 +85,15 @@ test('sets internal _state property', () => {
 
 ### Shell Execution
 - Runs commands and produces output
+- Preserves quoted arguments and shell pipelines
 - Detects and reports failures
 - Respects working directory and environment
 - Fails gracefully on non-existent commands
 - Creates files with downloaded content
+
+### Package Manager Planning
+- Builds install commands for macOS, Debian/Ubuntu, Fedora, Arch, and Alpine
+- Rejects unknown package managers and unsafe package names
 
 ## Benefits
 

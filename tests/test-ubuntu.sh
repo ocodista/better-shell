@@ -24,7 +24,7 @@ if [ ! -f "$LINUX_BINARY" ]; then
     ./tests/prepare-binaries.sh
 fi
 
-# Ensure Docker-compatible symlinks exist
+# Ensure Docker-compatible binary copies exist
 ./tests/prepare-binaries.sh
 
 echo "📦 Building Ubuntu test container..."

@@ -14,6 +14,9 @@ const currentDirectoryCommand = isWindows ? '(Get-Location).Path' : 'pwd';
 const environmentCommand = isWindows
   ? 'Write-Output $env:BETTER_SHELL_TEST_VALUE'
   : 'printf "%s" "$BETTER_SHELL_TEST_VALUE"';
+const outputCommand = isWindows
+  ? 'Write-Output "test output"'
+  : "printf '%s' 'test output'";
 const quotedArgumentCommand = isWindows
   ? 'Write-Output "hello world"'
   : "printf '%s' 'hello world'";
@@ -60,8 +63,9 @@ describe('shell.exec', () => {
   });
 
   test('captures command output', async () => {
-    const result = await shell.exec('echo test output', { silent: true });
+    const result = await shell.exec(outputCommand, { silent: true });
 
+    expect(result.success).toBe(true);
     expect(result.stdout).toContain('test output');
   });
 

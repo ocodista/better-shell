@@ -15,7 +15,9 @@ RUN apk add --no-cache \
     linux-headers \
     sudo \
     vim \
-    shadow
+    shadow \
+    gcompat \
+    libstdc++
 
 # Create a test user
 RUN adduser -D -s /bin/bash testuser && \
@@ -25,9 +27,9 @@ RUN adduser -D -s /bin/bash testuser && \
 USER testuser
 WORKDIR /home/testuser
 
-# Copy the appropriate architecture binary
-# TARGETARCH is set by Docker (amd64 or arm64)
-COPY --chown=testuser:testuser dist/better-shell-linux-${TARGETARCH} /home/testuser/better-shell
+# Copy the appropriate musl binary for Alpine.
+# TARGETARCH is set by Docker (amd64 or arm64).
+COPY --chown=testuser:testuser dist/better-shell-linux-${TARGETARCH}-musl /home/testuser/better-shell
 
 # Copy helper scripts
 COPY --chown=testuser:testuser tests/install-and-test.sh /home/testuser/install-and-test.sh

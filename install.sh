@@ -58,7 +58,16 @@ echo -e "Latest version: ${GREEN}$VERSION${NC}"
 if [ "$OS" = "darwin" ]; then
   BINARY_NAME="better-shell-darwin-$ARCH"
 else
-  BINARY_NAME="better-shell-linux-$ARCH"
+  LIBC="glibc"
+  if ldd --version 2>&1 | grep -qi musl; then
+    LIBC="musl"
+  fi
+
+  if [ "$LIBC" = "musl" ]; then
+    BINARY_NAME="better-shell-linux-$ARCH-musl"
+  else
+    BINARY_NAME="better-shell-linux-$ARCH"
+  fi
 fi
 
 DOWNLOAD_URL="https://github.com/$REPO/releases/download/$VERSION/$BINARY_NAME"

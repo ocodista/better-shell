@@ -5,6 +5,7 @@
 import { shell } from '../utils/shell';
 import { logger } from '../utils/logger';
 import { platform } from '../utils/platform';
+import { installPackages } from '../utils/package-manager';
 
 export const installZsh = async (): Promise<boolean> => {
   logger.step('Installing zsh...');
@@ -15,24 +16,8 @@ export const installZsh = async (): Promise<boolean> => {
     return true;
   }
 
-  // Install based on platform
-  if (platform.isMac()) {
-    const result = await shell.exec('brew install zsh', { silent: false });
-    return result.success;
-  } else if (platform.isLinux()) {
-    const pm = platform.packageManager;
-
-    if (pm === 'apt') {
-      await shell.exec('apt-get update', { silent: true });
-      const result = await shell.exec('apt-get install -y zsh', { silent: false });
-      return result.success;
-    } else if (pm === 'dnf') {
-      const result = await shell.exec('dnf install -y zsh', { silent: false });
-      return result.success;
-    } else if (pm === 'pacman') {
-      const result = await shell.exec('pacman -S --noconfirm zsh', { silent: false });
-      return result.success;
-    }
+  if (platform.isMac() || platform.isLinux()) {
+    return installPackages(['zsh'], { silent: false });
   }
 
   logger.error('Unsupported platform for zsh installation');
@@ -42,7 +27,7 @@ export const installZsh = async (): Promise<boolean> => {
 export const setZshAsDefault = async (): Promise<boolean> => {
   logger.step('Setting zsh as default shell...');
 
-  const zshPath = (await shell.exec('which zsh', { silent: true })).stdout.trim();
+  const zshPath = (await shell.exec('command -v zsh', { silent: true })).stdout.trim();
 
   if (!zshPath) {
     logger.error('Could not find zsh installation');
@@ -63,7 +48,7 @@ export const setZshAsDefault = async (): Promise<boolean> => {
     logger.success('zsh set as default shell');
     return true;
   } else {
-    logger.warn('Could not set zsh as default shell. You may need to run: chsh -s $(which zsh)');
+    logger.warn('Could not set zsh as default shell. You may need to run: chsh -s $(command -v zsh)');
     return false;
   }
 };

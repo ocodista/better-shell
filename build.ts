@@ -11,7 +11,14 @@ const VERSION = '1.0.0';
 
 type BuildTarget = {
   name: string;
-  target: 'bun-darwin-arm64' | 'bun-darwin-x64' | 'bun-linux-arm64' | 'bun-linux-x64' | 'bun-windows-x64';
+  target:
+    | 'bun-darwin-arm64'
+    | 'bun-darwin-x64'
+    | 'bun-linux-arm64'
+    | 'bun-linux-x64'
+    | 'bun-linux-arm64-musl'
+    | 'bun-linux-x64-musl'
+    | 'bun-windows-x64';
   outfile: string;
 };
 
@@ -27,14 +34,24 @@ const targets: BuildTarget[] = [
     outfile: './dist/better-shell-darwin-x64',
   },
   {
-    name: 'Linux ARM64',
+    name: 'Linux ARM64 (glibc)',
     target: 'bun-linux-arm64',
     outfile: './dist/better-shell-linux-arm64',
   },
   {
-    name: 'Linux x64',
+    name: 'Linux x64 (glibc)',
     target: 'bun-linux-x64',
     outfile: './dist/better-shell-linux-x64',
+  },
+  {
+    name: 'Linux ARM64 (musl)',
+    target: 'bun-linux-arm64-musl',
+    outfile: './dist/better-shell-linux-arm64-musl',
+  },
+  {
+    name: 'Linux x64 (musl)',
+    target: 'bun-linux-x64-musl',
+    outfile: './dist/better-shell-linux-x64-musl',
   },
   {
     name: 'Windows x64',
@@ -77,11 +94,11 @@ async function buildCurrent(): Promise<void> {
   } else if (platform === 'darwin' && arch === 'x64') {
     currentTarget = targets[1]; // macOS Intel
   } else if (platform === 'linux' && arch === 'arm64') {
-    currentTarget = targets[2]; // Linux ARM64
+    currentTarget = targets[2]; // Linux ARM64 glibc
   } else if (platform === 'linux' && arch === 'x64') {
-    currentTarget = targets[3]; // Linux x64
+    currentTarget = targets[3]; // Linux x64 glibc
   } else if (platform === 'win32' && arch === 'x64') {
-    currentTarget = targets[4]; // Windows x64
+    currentTarget = targets[6]; // Windows x64
   }
 
   if (!currentTarget) {

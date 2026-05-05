@@ -5,6 +5,7 @@
 import { shell } from '../utils/shell';
 import { logger } from '../utils/logger';
 import { platform } from '../utils/platform';
+import { installPackages } from '../utils/package-manager';
 
 export const installTmux = async (): Promise<boolean> => {
   logger.step('Installing tmux...');
@@ -15,24 +16,8 @@ export const installTmux = async (): Promise<boolean> => {
     return true;
   }
 
-  // Install based on platform
-  if (platform.isMac()) {
-    const result = await shell.exec('brew install tmux', { silent: false });
-    return result.success;
-  } else if (platform.isLinux()) {
-    const pm = platform.packageManager;
-
-    if (pm === 'apt') {
-      await shell.exec('apt-get update', { silent: true });
-      const result = await shell.exec('apt-get install -y tmux', { silent: false });
-      return result.success;
-    } else if (pm === 'dnf') {
-      const result = await shell.exec('dnf install -y tmux', { silent: false });
-      return result.success;
-    } else if (pm === 'pacman') {
-      const result = await shell.exec('pacman -S --noconfirm tmux', { silent: false });
-      return result.success;
-    }
+  if (platform.isMac() || platform.isLinux()) {
+    return installPackages(['tmux'], { silent: false });
   }
 
   logger.error('Failed to install tmux');

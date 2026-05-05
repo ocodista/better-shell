@@ -11,9 +11,9 @@ echo ""
 # Detect architecture
 ARCH=$(uname -m)
 if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
-    LINUX_BINARY="dist/better-shell-linux-arm64"
+    LINUX_BINARY="dist/better-shell-linux-arm64-musl"
 else
-    LINUX_BINARY="dist/better-shell-linux-amd64"
+    LINUX_BINARY="dist/better-shell-linux-amd64-musl"
 fi
 
 # Check if executable exists
@@ -24,7 +24,7 @@ if [ ! -f "$LINUX_BINARY" ]; then
     ./tests/prepare-binaries.sh
 fi
 
-# Ensure Docker-compatible symlinks exist
+# Ensure Docker-compatible binary copies exist
 ./tests/prepare-binaries.sh
 
 echo "📦 Building Alpine test container..."

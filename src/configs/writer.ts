@@ -4,15 +4,21 @@
 
 import { platform } from '../utils/platform';
 import { logger } from '../utils/logger';
+import { shell } from '../utils/shell';
 import { zshrcTemplate } from './templates/zshrc';
 import { antigenrcTemplate } from './templates/antigenrc';
-import { tmuxConfTemplate } from './templates/tmux.conf';
+import { getTmuxConfTemplate } from './templates/tmux.conf';
 import { ezaTokyonightTemplate } from './templates/eza-tokyonight';
 
 export interface BackupResult {
   success: boolean;
   backupDir?: string;
   files: string[];
+}
+
+export interface WriteConfigOptions {
+  tmux?: boolean;
+  eza?: boolean;
 }
 
 export const configWriter = {
@@ -84,7 +90,9 @@ export const configWriter = {
   /**
    * Write all configuration files
    */
-  writeConfigs: async (): Promise<boolean> => {
+  writeConfigs: async (options: WriteConfigOptions = {}): Promise<boolean> => {
+    const { tmux = true, eza = true } = options;
+
     try {
       // Write .zshrc
       await Bun.write(`${platform.homeDir}/.zshrc`, zshrcTemplate);
@@ -94,15 +102,24 @@ export const configWriter = {
       await Bun.write(`${platform.homeDir}/.antigenrc`, antigenrcTemplate);
       logger.success('Written ~/.antigenrc');
 
-      // Write .tmux.conf
-      await Bun.write(`${platform.homeDir}/.tmux.conf`, tmuxConfTemplate);
-      logger.success('Written ~/.tmux.conf');
+      if (tmux) {
+        // Write .tmux.conf
+        const zshPathResult = await shell.exec('command -v zsh', {
+          silent: true,
+          ignoreError: true,
+        });
+        const zshPath = zshPathResult.stdout.trim() || '/bin/zsh';
+        await Bun.write(`${platform.homeDir}/.tmux.conf`, getTmuxConfTemplate(zshPath));
+        logger.success('Written ~/.tmux.conf');
+      }
 
-      // Write eza config
-      const ezaConfigDir = `${platform.homeDir}/.config/eza`;
-      await Bun.write(`${ezaConfigDir}/.keep`, ''); // Create directory
-      await Bun.write(`${ezaConfigDir}/tokyonight.yml`, ezaTokyonightTemplate);
-      logger.success('Written ~/.config/eza/tokyonight.yml');
+      if (eza) {
+        // Write eza config
+        const ezaConfigDir = `${platform.homeDir}/.config/eza`;
+        await Bun.write(`${ezaConfigDir}/.keep`, ''); // Create directory
+        await Bun.write(`${ezaConfigDir}/tokyonight.yml`, ezaTokyonightTemplate);
+        logger.success('Written ~/.config/eza/tokyonight.yml');
+      }
 
       return true;
     } catch (error) {

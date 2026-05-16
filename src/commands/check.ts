@@ -74,24 +74,25 @@ export const check = async (): Promise<boolean> => {
   logger.header('Existing Installations');
 
   const tools = [
-    'zsh',
-    'tmux',
-    'fzf',
-    'eza',
-    'carapace',
-    'node',
-    'npm',
+    { name: 'zsh', versionCommand: 'zsh --version' },
+    { name: 'tmux', versionCommand: 'tmux -V' },
+    { name: 'fzf', versionCommand: 'fzf --version' },
+    { name: 'eza', versionCommand: 'eza --version' },
+    { name: 'carapace', versionCommand: 'carapace --version' },
+    { name: 'mise', versionCommand: 'mise --version' },
+    { name: 'node', versionCommand: 'node --version' },
+    { name: 'npm', versionCommand: 'npm --version' },
   ];
 
   for (const tool of tools) {
-    if (await shell.commandExists(tool)) {
-      const version = (await shell.exec(`${tool} --version 2>&1 | head -n1`, {
+    if (await shell.commandExists(tool.name)) {
+      const version = (await shell.exec(`${tool.versionCommand} 2>&1 | head -n1`, {
         silent: true,
         ignoreError: true,
       })).stdout.trim();
-      logger.info(`${tool}: ${version || 'installed'}`);
+      logger.info(`${tool.name}: ${version || 'installed'}`);
     } else {
-      logger.dim(`${tool}: not installed`);
+      logger.dim(`${tool.name}: not installed`);
     }
   }
 
@@ -109,14 +110,6 @@ export const check = async (): Promise<boolean> => {
     logger.info('antigen: installed');
   } else {
     logger.dim('antigen: not installed');
-  }
-
-  // Check asdf
-  const asdfExists = await Bun.file(`${platform.homeDir}/.asdf/asdf.sh`).exists();
-  if (asdfExists) {
-    logger.info('asdf: installed');
-  } else {
-    logger.dim('asdf: not installed');
   }
 
   logger.newline();

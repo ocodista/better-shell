@@ -77,11 +77,11 @@ docker exec $CONTAINER_NAME bash -c '
     sudo cp -r /root/.config/eza /home/testuser/.config/ 2>/dev/null || true
     sudo cp /root/.fzf.zsh /home/testuser/ 2>/dev/null || true
     sudo cp -r /root/.fzf /home/testuser/ 2>/dev/null || true
-    sudo cp -r /root/.asdf /home/testuser/ 2>/dev/null || true
-    sudo cp /root/.tool-versions /home/testuser/ 2>/dev/null || true
+    sudo cp -r /root/.local /home/testuser/ 2>/dev/null || true
+    sudo cp -r /root/.config/mise /home/testuser/.config/ 2>/dev/null || true
     sudo cp -r /root/.oh-my-zsh /home/testuser/ 2>/dev/null || true
     sudo cp -r /root/.tmux /home/testuser/ 2>/dev/null || true
-    sudo chown -R testuser:testuser /home/testuser/.zshrc /home/testuser/.antigenrc /home/testuser/antigen.zsh /home/testuser/.tmux.conf /home/testuser/.config /home/testuser/.fzf.zsh /home/testuser/.fzf /home/testuser/.asdf /home/testuser/.tool-versions /home/testuser/.oh-my-zsh /home/testuser/.tmux 2>/dev/null || true
+    sudo chown -R testuser:testuser /home/testuser/.zshrc /home/testuser/.antigenrc /home/testuser/antigen.zsh /home/testuser/.tmux.conf /home/testuser/.config /home/testuser/.fzf.zsh /home/testuser/.fzf /home/testuser/.local /home/testuser/.oh-my-zsh /home/testuser/.tmux 2>/dev/null || true
     # Fix hardcoded /root paths
     sudo sed -i "s|/root/|/home/testuser/|g" /home/testuser/.fzf.zsh 2>/dev/null || true
     sudo sed -i "s|/root/|/home/testuser/|g" /home/testuser/.zshrc 2>/dev/null || true
@@ -108,7 +108,7 @@ echo "  Ctrl+R           - Blazingly fast search with fzf"
 echo "  lsx              - List files with icons (eza)"
 echo "  z <dir>          - Jump to frequently used directories"
 echo "  tmux             - Start terminal multiplexer"
-echo "  node --version   - Check Node.js (via asdf)"
+echo "  node --version   - Check Node.js (via mise)"
 echo ""
 echo "To stop and remove the container:"
 echo "  docker rm -f $CONTAINER_NAME"

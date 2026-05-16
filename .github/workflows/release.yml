@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun run build:all
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/better-shell-darwin-arm64
+            dist/better-shell-darwin-arm64.sha256
+            dist/better-shell-darwin-x64
+            dist/better-shell-darwin-x64.sha256
+            dist/better-shell-linux-arm64
+            dist/better-shell-linux-arm64.sha256
+            dist/better-shell-linux-x64
+            dist/better-shell-linux-x64.sha256
+            dist/better-shell-linux-arm64-musl
+            dist/better-shell-linux-arm64-musl.sha256
+            dist/better-shell-linux-x64-musl
+            dist/better-shell-linux-x64-musl.sha256
+            dist/better-shell-windows-x64.exe
+            dist/better-shell-windows-x64.exe.sha256

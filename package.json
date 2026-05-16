@@ -1,7 +1,7 @@
 {
   "name": "better-shell",
   "version": "1.0.0",
-  "description": "One-command shell setup with zsh, oh-my-zsh, fzf, asdf, tmux, and more",
+  "description": "Interactive terminal setup manager with zsh, Oh My Zsh, fzf, mise, tmux, and more",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -44,12 +44,17 @@
     "zsh",
     "oh-my-zsh",
     "fzf",
-    "asdf",
+    "mise",
     "tmux",
+    "tui",
     "cli",
     "developer-tools",
     "bun"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^1.4.0",
+    "picocolors": "^1.1.1"
+  }
 }

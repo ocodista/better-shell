@@ -22,9 +22,11 @@ bindkey -e
 # Source Oh My Zsh
 source $ZSH/oh-my-zsh.sh
 
-# ASDF version manager
-. $HOME/.asdf/asdf.sh
-fpath=(\${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
+# mise version manager
+export PATH="$HOME/.local/bin:$PATH"
+if command -v mise &> /dev/null; then
+  eval "$(mise activate zsh)"
+fi
 
 # FZF integration
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -33,8 +35,15 @@ fpath=(\${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
 export EZA_CONFIG_DIR=~/.config/eza/tokyonight.yml
 
 # Aliases
-alias lsx='eza -l -a --icons'
-alias vim=nvim
+if command -v eza &> /dev/null; then
+  alias lsx='eza -l -a --icons'
+else
+  alias lsx='ls -la'
+fi
+
+if command -v nvim &> /dev/null; then
+  alias vim=nvim
+fi
 
 # Auto-completion
 autoload -Uz compinit; compinit

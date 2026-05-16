@@ -2,8 +2,8 @@
  * .tmux.conf template based on user's configuration
  */
 
-export const tmuxConfTemplate = `# Default shell
-set-option -g default-shell /usr/bin/zsh
+export const getTmuxConfTemplate = (defaultShell: string): string => `# Default shell
+set-option -g default-shell ${defaultShell}
 
 # New window/pane in current path
 bind c new-window -c "#{pane_current_path}"
@@ -27,7 +27,7 @@ set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
 
 # Plugin settings
-set -g @ressurect-capture-pane-contents 'on'
+set -g @resurrect-capture-pane-contents 'on'
 set -g @continuum-boot 'on'
 set -g @continuum-restore 'on'
 

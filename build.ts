@@ -6,6 +6,8 @@
  */
 
 import { $ } from 'bun';
+import { createHash } from 'node:crypto';
+import { basename } from 'node:path';
 
 const VERSION = '1.0.0';
 
@@ -60,6 +62,16 @@ const targets: BuildTarget[] = [
   },
 ];
 
+async function writeChecksum(outfile: string): Promise<string> {
+  const file = Bun.file(outfile);
+  const bytes = await file.arrayBuffer();
+  const hash = createHash('sha256').update(new Uint8Array(bytes)).digest('hex');
+  const checksumPath = `${outfile}.sha256`;
+
+  await Bun.write(checksumPath, `${hash}  ${basename(outfile)}\n`);
+  return checksumPath;
+}
+
 async function buildTarget(target: BuildTarget): Promise<boolean> {
   console.log(`\n🔨 Building for ${target.name}...`);
 
@@ -70,8 +82,10 @@ async function buildTarget(target: BuildTarget): Promise<boolean> {
     // Get file size
     const stat = await Bun.file(target.outfile).stat();
     const sizeMB = (stat.size / 1024 / 1024).toFixed(2);
+    const checksumPath = await writeChecksum(target.outfile);
 
     console.log(`✅ Built ${target.name}: ${target.outfile} (${sizeMB} MB)`);
+    console.log(`   SHA256: ${checksumPath}`);
     return true;
   } catch (error) {
     console.error(`❌ Error building ${target.name}:`, error);

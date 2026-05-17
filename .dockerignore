@@ -3,6 +3,8 @@
 .pi
 .wrangler
 node_modules
+target
+dist
 demo
 coverage
 out
@@ -14,7 +16,3 @@ logs
 *.tsbuildinfo
 .env
 .env.*
-
-# Keep only Linux release binaries needed by Docker tests.
-dist/*
-!dist/better-shell-linux-*

@@ -2,6 +2,22 @@
 # Defaults keep the Dockerfile compatible with the legacy Docker builder.
 ARG TARGETPLATFORM=linux/amd64
 ARG TARGETARCH=amd64
+
+FROM --platform=$TARGETPLATFORM rust:1.91-slim-bullseye AS builder
+ARG TARGETARCH
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends musl-tools && rm -rf /var/lib/apt/lists/*
+COPY Cargo.toml Cargo.lock ./
+COPY src ./src
+RUN case "$TARGETARCH" in \
+      arm64) rust_target="aarch64-unknown-linux-musl" ;; \
+      amd64) rust_target="x86_64-unknown-linux-musl" ;; \
+      *) echo "Unsupported TARGETARCH: $TARGETARCH" >&2; exit 1 ;; \
+    esac && \
+    rustup target add "$rust_target" && \
+    cargo build --release --target "$rust_target" && \
+    cp "target/$rust_target/release/better-shell" /usr/local/bin/better-shell
+
 FROM --platform=$TARGETPLATFORM alpine:3.19
 
 # Build args for platform detection
@@ -14,8 +30,6 @@ RUN apk add --no-cache \
     ca-certificates \
     curl \
     git \
-    gcompat \
-    libstdc++ \
     shadow \
     sudo \
     unzip
@@ -28,9 +42,8 @@ RUN adduser -D -s /bin/bash testuser && \
 USER testuser
 WORKDIR /home/testuser
 
-# Copy the appropriate musl binary for Alpine.
-# TARGETARCH is set by Docker (amd64 or arm64).
-COPY --chown=testuser:testuser dist/better-shell-linux-${TARGETARCH}-musl /home/testuser/better-shell
+# Copy the Rust binary built for this Docker platform.
+COPY --from=builder --chown=testuser:testuser /usr/local/bin/better-shell /home/testuser/better-shell
 
 # Copy helper scripts
 COPY --chown=testuser:testuser tests/install-and-test.sh /home/testuser/install-and-test.sh

@@ -2,6 +2,13 @@
 # Defaults keep the Dockerfile compatible with the legacy Docker builder.
 ARG TARGETPLATFORM=linux/amd64
 ARG TARGETARCH=amd64
+
+FROM --platform=$TARGETPLATFORM rust:1.91-slim-bullseye AS builder
+WORKDIR /app
+COPY Cargo.toml Cargo.lock ./
+COPY src ./src
+RUN cargo build --release
+
 FROM --platform=$TARGETPLATFORM ubuntu:22.04
 
 # Build args for platform detection
@@ -28,9 +35,8 @@ RUN useradd -m -s /bin/bash testuser && \
 USER testuser
 WORKDIR /home/testuser
 
-# Copy the appropriate architecture binary
-# TARGETARCH is set by Docker (amd64 or arm64)
-COPY --chown=testuser:testuser dist/better-shell-linux-${TARGETARCH} /home/testuser/better-shell
+# Copy the Rust binary built for this Docker platform.
+COPY --from=builder --chown=testuser:testuser /app/target/release/better-shell /home/testuser/better-shell
 
 # Copy helper scripts
 COPY --chown=testuser:testuser tests/install-and-test.sh /home/testuser/install-and-test.sh

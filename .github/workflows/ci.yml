@@ -6,8 +6,8 @@ on:
   pull_request:
 
 jobs:
-  unit:
-    name: Unit tests (${{ matrix.os }})
+  rust:
+    name: Rust checks (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -15,20 +15,18 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          bun-version: latest
-      - run: bun install --frozen-lockfile
-      - run: bun test
-      - run: bun run build
+          components: rustfmt, clippy
+      - run: cargo fmt --check
+      - run: cargo clippy --release -- -D warnings
+      - run: cargo test
+      - run: cargo build --release
 
   docker-integration:
     name: Docker integration tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      - run: bun install --frozen-lockfile
-      - run: bun run test:integration
+      - uses: dtolnay/rust-toolchain@stable
+      - run: ./tests/test-integration.sh

@@ -1,6 +1,6 @@
 # Better Shell
 
-A terminal setup manager that installs and maintains a modern shell environment.
+A native Rust terminal setup manager that installs and maintains a modern shell environment.
 
 Better Shell turns a fresh terminal into a productive setup. It installs zsh, fuzzy history, completions, directory jumping, a modern `ls`, tmux, Node.js through mise, fonts, config files, and automatic backups.
 
@@ -35,6 +35,8 @@ irm https://shell.ocodista.com/install.ps1 | iex
 ```
 
 Windows prefers WSL2. If WSL2 is unavailable, it can install a native PowerShell setup.
+
+End users do **not** need Rust installed. Releases ship prebuilt native binaries for macOS, Linux glibc, Linux musl, and Windows. The installer detects your OS, CPU, and libc, then downloads the matching binary from GitHub Releases.
 
 Alternative URLs: [`install.sh`](https://raw.githubusercontent.com/ocodista/better-shell/main/install.sh), [`install.ps1`](https://raw.githubusercontent.com/ocodista/better-shell/main/install.ps1)
 
@@ -87,6 +89,8 @@ Better Shell installs Node.js LTS globally with:
 mise use --global node@lts
 ```
 
+On Alpine, Better Shell installs `mise` but skips Node.js by default because official Node.js LTS binaries are glibc-based and `mise` may fall back to a source build. Use `apk add nodejs npm` there if you need Node.js.
+
 ## Requirements
 
 - macOS: Git, curl, Homebrew, and internet access.
@@ -125,39 +129,40 @@ It saves backups to `~/.better-shell-backups/YYYY-MM-DD-HHMMSS` before writing n
 
 ## Development
 
-Built with [Bun](https://bun.sh), TypeScript, and [@clack/prompts](https://github.com/bombshell-dev/clack).
-
-An experimental Rust port lives in `rust-cli/`. It mirrors the user-facing CLI surface (`manage`, `configure`, `install`, `check`, `backup`, and `restore`) so the project can compare Bun's standalone binary with a smaller native implementation before deciding whether to migrate.
+Built with Rust and Cargo. The official CLI is the native Rust binary.
 
 ```bash
 git clone https://github.com/ocodista/better-shell.git
 cd better-shell
-bun install
-bun run build
-./dist/better-shell install --dry-run
+cargo build --release
+./target/release/better-shell install --dry-run
 ```
 
 Useful commands:
 
 ```bash
-bun test                         # Unit tests
-bun run build:all                # Build release binaries and checksums
-bun run build:rust               # Build experimental Rust prototype
-bun run compare:cli              # Generate reports/cli-comparison.html
-bun run test:quick               # Fast container smoke test
-bun run test:integration         # Ubuntu and Alpine integration tests
-bun run deploy:prod              # Deploy shell.ocodista.com worker
+make test                        # Unit tests
+make check                       # Formatting, clippy, tests, and release build
+make build                       # Build current-platform release artifact in dist/
+make integration                 # Ubuntu and Alpine integration tests
+make integration-ubuntu          # Ubuntu integration only
+make integration-alpine          # Alpine integration only
+make dev-container               # Start persistent Ubuntu container for docker exec
+make dev-alpine                  # Start persistent Alpine container for docker exec
+make join-alpine                 # docker exec into persistent Alpine container
+make dry-run                     # Preview installer with cargo run
+npx wrangler deploy --env production  # Deploy shell.ocodista.com worker
 ```
 
 Project tooling:
 
 | Purpose | Tools |
 | --- | --- |
-| Runtime and build | Bun, TypeScript |
-| TUI | @clack/prompts, picocolors |
-| Distribution | GitHub Releases, compiled Bun binaries, SHA-256 checksums |
+| Runtime and build | Rust, Cargo |
+| TUI | dialoguer |
+| Distribution | GitHub Releases, compiled Rust binaries, SHA-256 checksums |
 | Install endpoint | Cloudflare Workers, Wrangler |
-| Tests | Bun test, Docker, Ubuntu and Alpine test runners |
+| Tests | Cargo test, Docker, Ubuntu and Alpine test runners |
 | Demo generation | VHS, Docker, Remotion, npm |
 
 ## Troubleshooting

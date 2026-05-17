@@ -1,8 +1,8 @@
 [package]
-name = "better-shell-rust"
-version = "0.2.0"
+name = "better-shell"
+version = "1.0.0"
 edition = "2024"
-description = "Rust implementation of Better Shell CLI for size and startup comparisons"
+description = "Terminal setup manager with zsh, Oh My Zsh, fzf, mise, tmux, and more"
 license = "MIT"
 publish = false
 

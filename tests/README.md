@@ -1,114 +1,61 @@
 # Testing Strategy
 
-Tests focus on **what the code does** (behavior) rather than **how it does it** (implementation).
+Tests focus on user-facing behavior: the CLI should build, report health correctly, install a complete terminal setup in containers, and write the expected configuration files.
 
-## Test Organization
-
-### Unit Tests
-Location: `src/**/*.test.ts`
-
-Tests individual utility functions. Focus on behavior and real-world outcomes.
+## Local Rust checks
 
 ```bash
-bun test
-bun run test:unit
-bun test --coverage
+make check
 ```
 
-### Integration Tests
-Location: `tests/integration/`
-
-Verify complete installation in Docker containers. These scripts build release binaries first. Ubuntu uses glibc Linux binaries; Alpine uses musl Linux binaries.
+Or run the individual commands:
 
 ```bash
-bun run test:integration
-bun run test:integration:ubuntu
-bun run test:integration:alpine
+cargo fmt --check
+cargo clippy --release -- -D warnings
+cargo test
+cargo build --release
 ```
 
-## Writing Tests
+## Docker integration tests
 
-### ✅ Test Behavior
+The Docker fixtures build the Rust binary from source inside the target Linux image, then run the installer and verify the resulting shell setup.
 
-```typescript
-// Good: Tests outcomes
-test('executes commands and returns output', async () => {
-  const result = await shell.exec('echo hello', { silent: true });
-
-  expect(result.success).toBe(true);
-  expect(result.stdout.trim()).toBe('hello');
-});
-
-// Good: Tests real scenarios
-test('stops on first failure by default', async () => {
-  const success = await shell.execMany(
-    ['echo success', 'command-that-fails', 'echo third'],
-    { silent: true }
-  );
-
-  expect(success).toBe(false);
-});
+```bash
+make integration          # Ubuntu and Alpine
+make integration-ubuntu   # Ubuntu only
+make integration-alpine   # Alpine only
+make dev-container        # Persistent Ubuntu container for docker exec
+make dev-alpine           # Persistent Alpine container for docker exec
+make join-alpine          # docker exec into persistent Alpine container
+make ubuntu               # Interactive Ubuntu fixture
+make alpine               # Interactive Alpine fixture
+make quick                # Quick Ubuntu shell
 ```
 
-### ❌ Avoid Implementation Details
+For a persistent manual test container:
 
-```typescript
-// Bad: Tests internals
-test('calls console.log with formatted string', () => {
-  const spy = spyOn(console, 'log');
-  logger.info('test');
-  expect(spy).toHaveBeenCalledWith('...');
-});
+```bash
+make dev-container
+make join-ubuntu
 
-// Bad: Tests private state
-test('sets internal _state property', () => {
-  expect(myClass._state).toBe('initialized');
-});
+make dev-alpine
+make join-alpine
 ```
 
-## Test Categories
+## What integration verifies
 
-### Platform Detection
-- Normalizes macOS, Linux, Windows, and unknown platforms
-- Normalizes x64, arm64, and unknown architectures
-- Detects package managers for Homebrew, apt, dnf, pacman, and apk
-- Detects same platform/arch across calls
-- Matches platform helpers to detected platform
-- Verifies home directory exists and is readable
-- Confirms shell executable works
-
-### Logger
-- Includes expected content in messages
-- Distinguishes log levels with different output
-- Starts, stops, and fails spinners
-- Applies formatting with color codes
-
-### Shell Execution
-- Runs commands and produces output
-- Preserves quoted arguments and shell pipelines
-- Detects and reports failures
-- Respects working directory and environment
-- Fails gracefully on non-existent commands
-- Creates files with downloaded content
-
-### Package Manager Planning
-- Builds install commands for macOS, Debian/Ubuntu, Fedora, Arch, and Alpine
-- Rejects unknown package managers and unsafe package names
-
-## Benefits
-
-- **Refactor safely**: Change implementation without breaking tests
-- **Real confidence**: Verify actual user-facing behavior
-- **Better docs**: Show how code works
-- **Fewer brittle tests**: Avoid coupling to internals
-- **Meaningful failures**: Breaks indicate real issues
+- `zsh` is installed and loads correctly.
+- `fzf`, `eza`, `tmux`, and `mise` are installed.
+- Oh My Zsh and Antigen are installed.
+- `~/.zshrc`, `~/.antigenrc`, `~/.tmux.conf`, and the eza Tokyo Night config are written.
 
 ## CI/CD
 
 GitHub Actions runs:
-- Type checking
-- Unit tests (macOS, Ubuntu)
-- Integration tests (Ubuntu, Alpine containers)
-- Build verification (all platforms)
 
-Configuration: `.github/workflows/ci.yml`
+- Rust formatting, clippy, tests, and release build on Linux, macOS, and Windows.
+- Docker integration tests on Ubuntu and Alpine containers.
+- Release artifact builds for macOS, Linux glibc, Linux musl, and Windows.
+
+Configuration: `.github/workflows/ci.yml` and `.github/workflows/release.yml`.

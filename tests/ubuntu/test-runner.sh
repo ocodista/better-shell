@@ -101,6 +101,10 @@ echo "🚀 Testing zsh loads correctly..."
 zsh -c "echo 'Zsh interactive shell loaded successfully'" || { echo "❌ zsh failed to load"; exit 1; }
 echo "    ✓ zsh loads correctly"
 
+echo "  → Checking zsh autosuggestions..."
+zsh -ic '(( $+functions[_zsh_autosuggest_start] )) && [[ ${ZSH_AUTOSUGGEST_STRATEGY[*]} == *completion* ]]' >/dev/null 2>&1 || { echo "❌ zsh autosuggestions not loaded"; exit 1; }
+echo "    ✓ zsh autosuggestions loaded"
+
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "✅ All integration tests passed!"

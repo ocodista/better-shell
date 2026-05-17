@@ -1,33 +1,26 @@
 #!/usr/bin/env bash
-# Start Alpine test container and keep it running for manual testing
+# Start Alpine test container and keep it running for manual testing.
 
-set -e
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "🏔️  Starting Persistent Alpine Test Container"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Detect architecture
-ARCH=$(uname -m)
-if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
-    TARGETARCH="arm64"
-    LINUX_BINARY="dist/better-shell-linux-arm64-musl"
-else
-    TARGETARCH="amd64"
-    LINUX_BINARY="dist/better-shell-linux-amd64-musl"
-fi
-TARGETPLATFORM="linux/$TARGETARCH"
+arch="$(uname -m)"
+case "$arch" in
+  arm64|aarch64) target_arch="arm64" ;;
+  x86_64|amd64) target_arch="amd64" ;;
+  *)
+    echo "Unsupported architecture: $arch" >&2
+    exit 1
+    ;;
+esac
 
-# Check if executable exists
-if [ ! -f "$LINUX_BINARY" ]; then
-    echo "❌ Linux executable not found ($LINUX_BINARY). Building all platforms..."
-    bun run build:all
-    ./tests/prepare-binaries.sh
-fi
-
-# Ensure Docker-compatible symlinks exist
-./tests/prepare-binaries.sh
+target_platform="linux/$target_arch"
 
 # Container name
 CONTAINER_NAME="better-shell-alpine-dev"
@@ -62,10 +55,10 @@ if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
     fi
 fi
 
-echo "📦 Building Alpine test container ($TARGETPLATFORM)..."
+echo "📦 Building Alpine test container ($target_platform)..."
 docker build \
-    --build-arg TARGETPLATFORM="$TARGETPLATFORM" \
-    --build-arg TARGETARCH="$TARGETARCH" \
+    --build-arg TARGETPLATFORM="$target_platform" \
+    --build-arg TARGETARCH="$target_arch" \
     -f tests/alpine/Dockerfile \
     -t better-shell-alpine \
     . \

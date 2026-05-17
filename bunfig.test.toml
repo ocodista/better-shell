@@ -1,5 +1,0 @@
-[test]
-preload = []
-coverage = true
-coverageDir = "./coverage"
-coverageReporter = ["text", "html", "json"]

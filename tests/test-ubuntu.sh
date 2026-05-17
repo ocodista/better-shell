@@ -1,42 +1,34 @@
 #!/usr/bin/env bash
-# Test better-shell on Ubuntu
+# Test better-shell on Ubuntu.
 
-set -e
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "🐧 Testing better-shell on Ubuntu 22.04"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Detect architecture
-ARCH=$(uname -m)
-if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
-    TARGETARCH="arm64"
-    LINUX_BINARY="dist/better-shell-linux-arm64"
-else
-    TARGETARCH="amd64"
-    LINUX_BINARY="dist/better-shell-linux-amd64"
-fi
-TARGETPLATFORM="linux/$TARGETARCH"
+arch="$(uname -m)"
+case "$arch" in
+  arm64|aarch64) target_arch="arm64" ;;
+  x86_64|amd64) target_arch="amd64" ;;
+  *)
+    echo "Unsupported architecture: $arch" >&2
+    exit 1
+    ;;
+esac
 
-# Check if executable exists
-if [ ! -f "$LINUX_BINARY" ]; then
-    echo "❌ Linux executable not found ($LINUX_BINARY). Building all platforms..."
-    bun run build:all
-    # Prepare binaries with Docker-compatible names
-    ./tests/prepare-binaries.sh
-fi
+target_platform="linux/$target_arch"
 
-# Ensure Docker-compatible binary copies exist
-./tests/prepare-binaries.sh
-
-echo "📦 Building Ubuntu test container ($TARGETPLATFORM)..."
+echo "📦 Building Ubuntu test container ($target_platform)..."
 docker build \
-    --build-arg TARGETPLATFORM="$TARGETPLATFORM" \
-    --build-arg TARGETARCH="$TARGETARCH" \
-    -f tests/ubuntu/Dockerfile \
-    -t better-shell-ubuntu \
-    .
+  --build-arg TARGETPLATFORM="$target_platform" \
+  --build-arg TARGETARCH="$target_arch" \
+  -f tests/ubuntu/Dockerfile \
+  -t better-shell-ubuntu \
+  .
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

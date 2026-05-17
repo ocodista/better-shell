@@ -6,7 +6,7 @@ use std::path::Path;
 use std::process::{Command, ExitCode, Stdio};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-const VERSION: &str = "0.2.0-rust";
+const VERSION: &str = "1.0.0";
 
 #[derive(Debug, Clone, Copy)]
 struct Features {
@@ -68,7 +68,7 @@ fn main() -> ExitCode {
             ExitCode::SUCCESS
         }
         "--version" | "-v" | "version" => {
-            println!("better-shell-rust {VERSION}");
+            println!("better-shell v{VERSION}");
             ExitCode::SUCCESS
         }
         "manage" => exit_bool(run_control_center()),
@@ -80,13 +80,13 @@ fn main() -> ExitCode {
             Some(path) => exit_bool(restore(path)),
             None => {
                 error("Backup path is required");
-                info("Usage: better-shell-rust restore <backup-path>");
+                info("Usage: better-shell restore <backup-path>");
                 ExitCode::from(1)
             }
         },
         command => {
             error(&format!("Unknown command: {command}"));
-            info("Run `better-shell-rust --help` for usage information");
+            info("Run `better-shell --help` for usage information");
             ExitCode::from(1)
         }
     }
@@ -150,20 +150,18 @@ fn parse_install_options(args: &[String]) -> Result<InstallOptions, String> {
 
 fn print_help() {
     println!(
-        "\n\x1b[1mbetter-shell-rust\x1b[0m v{VERSION}\n\n\
-A Rust implementation of the Better Shell terminal setup manager.\n\n\
-\x1b[1mUSAGE:\x1b[0m\n  better-shell-rust [command] [options]\n\n\
+        "\n\x1b[1mbetter-shell\x1b[0m v{VERSION}\n\n\
+A terminal setup manager for zsh, completions, fuzzy search, mise, tmux, fonts, and config backups.\n\n\
+\x1b[1mUSAGE:\x1b[0m\n  better-shell [command] [options]\n\n\
 \x1b[1mCOMMANDS:\x1b[0m\n  manage                Open the interactive control center\n  configure             Customize this terminal with a guided TUI\n  install               Install and configure everything\n  check                 Check system requirements and installed tools\n  backup [destination]  Backup existing configurations\n  restore <backup-path> Restore from backup\n\n\
 \x1b[1mOPTIONS:\x1b[0m\n  --interactive        Use the guided TUI installer\n  --skip-backup        Skip configuration backup\n  --dry-run            Preview installation without making changes\n  --minimal            Skip optional tools such as fonts and carapace\n  --no-fonts           Skip FiraCode Nerd Font\n  --no-fzf             Skip fzf\n  --no-eza             Skip eza\n  --no-carapace        Skip carapace completions\n  --no-mise            Skip mise and Node.js setup\n  --no-node            Skip Node.js LTS setup\n  --no-tmux            Skip tmux and tmux plugins\n  --version, -v        Show version\n  --help, -h           Show this help\n\n\
-\x1b[1mEXAMPLES:\x1b[0m\n  better-shell-rust\n  better-shell-rust configure\n  better-shell-rust install --interactive\n  better-shell-rust install --dry-run\n  better-shell-rust install --minimal\n  better-shell-rust check\n  better-shell-rust backup\n  better-shell-rust restore ~/.better-shell-backups/2024-01-01-120000\n"
+\x1b[1mEXAMPLES:\x1b[0m\n  better-shell\n  better-shell configure\n  better-shell install --interactive\n  better-shell install --dry-run\n  better-shell install --minimal\n  better-shell check\n  better-shell backup\n  better-shell restore ~/.better-shell-backups/2024-01-01-120000\n"
     );
 }
 
 fn run_control_center() -> bool {
     if !is_interactive() {
-        info(
-            "Interactive control center requires a TTY. Run `better-shell-rust --help` for commands.",
-        );
+        info("Interactive control center requires a TTY. Run `better-shell --help` for commands.");
         return true;
     }
 
@@ -219,7 +217,7 @@ fn run_control_center() -> bool {
 fn run_install_wizard(initial_profile: Option<InstallProfile>, show_header: bool) -> bool {
     if !is_interactive() {
         error(
-            "Interactive setup requires a TTY. Run `better-shell-rust install` for non-interactive installs.",
+            "Interactive setup requires a TTY. Run `better-shell install` for non-interactive installs.",
         );
         return false;
     }
@@ -414,13 +412,19 @@ fn show_configuration_guide() {
     println!("  • ~/.config/eza/tokyonight.yml");
     println!();
     println!("Useful commands:");
-    println!("  • better-shell-rust check");
-    println!("  • better-shell-rust install --dry-run");
-    println!("  • better-shell-rust backup");
-    println!("  • better-shell-rust restore <backup-path>");
+    println!("  • better-shell check");
+    println!("  • better-shell install --dry-run");
+    println!("  • better-shell backup");
+    println!("  • better-shell restore <backup-path>");
 }
 
 fn install(options: InstallOptions) -> bool {
+    if current_platform() == "windows" {
+        error("The better-shell CLI installer manages macOS and Linux shell setups.");
+        info("For Windows, run: irm https://shell.ocodista.com/install.ps1 | iex");
+        return false;
+    }
+
     if options.dry_run {
         warn("DRY RUN MODE - No changes will be made");
         println!();
@@ -434,7 +438,7 @@ fn install(options: InstallOptions) -> bool {
             info(&format!("Installing for user: {sudo_user}"));
         } else {
             warn("Running as root. Config files will be installed to /root.");
-            info("To install for a specific user, run: sudo -u username better-shell-rust install");
+            info("To install for a specific user, run: sudo -u username better-shell install");
         }
         println!();
     }
@@ -473,6 +477,10 @@ fn install(options: InstallOptions) -> bool {
     }
     if !install_antigen() {
         error("Failed to install Antigen. Aborting.");
+        return false;
+    }
+    if !install_zsh_plugins() {
+        error("Failed to install zsh plugins. Aborting.");
         return false;
     }
     println!();
@@ -532,15 +540,27 @@ fn install(options: InstallOptions) -> bool {
     success("Your terminal is now supercharged!");
     println!();
     info("Next steps:");
-    dim("1. Restart your terminal or run: exec zsh");
+    let mut next_step = 1;
+    dim(&format!(
+        "{next_step}. Restart your terminal or run: exec zsh"
+    ));
+    next_step += 1;
     if options.features.tmux {
-        dim("2. Open tmux and run \"prefix + I\" to install tmux plugins");
+        dim(&format!(
+            "{next_step}. Open tmux and run \"prefix + I\" to install tmux plugins"
+        ));
+        next_step += 1;
     }
-    if options.features.node {
-        dim("3. Verify Node.js installation: node --version");
+    if options.features.node && package_manager() != "apk" {
+        dim(&format!(
+            "{next_step}. Verify Node.js installation: node --version"
+        ));
+        next_step += 1;
     }
     if options.features.fonts {
-        dim("4. Configure your terminal to use FiraCode Nerd Font");
+        dim(&format!(
+            "{next_step}. Configure your terminal to use FiraCode Nerd Font"
+        ));
     }
     println!();
 
@@ -583,6 +603,7 @@ fn dry_run_steps(options: &InstallOptions) -> Vec<&'static str> {
     steps.push("Install zsh");
     steps.push("Install Oh My Zsh");
     steps.push("Install Antigen");
+    steps.push("Install zsh plugins");
     if options.features.fonts {
         steps.push("Install FiraCode Nerd Font");
     }
@@ -982,6 +1003,55 @@ fn install_antigen() -> bool {
     }
 }
 
+fn install_zsh_plugins() -> bool {
+    step("Installing zsh plugins...");
+    let plugin_dir = format!("{}/.zsh/plugins", home_dir());
+    if let Err(error) = fs::create_dir_all(&plugin_dir) {
+        self_error(&format!("Failed to create zsh plugin dir: {error}"));
+        return false;
+    }
+
+    let plugins = [
+        (
+            "zsh-autosuggestions",
+            "https://github.com/zsh-users/zsh-autosuggestions.git",
+        ),
+        (
+            "zsh-syntax-highlighting",
+            "https://github.com/zsh-users/zsh-syntax-highlighting.git",
+        ),
+        (
+            "zsh-completions",
+            "https://github.com/zsh-users/zsh-completions.git",
+        ),
+        ("zsh-z", "https://github.com/agkozak/zsh-z.git"),
+    ];
+
+    for (name, url) in plugins {
+        let destination = format!("{plugin_dir}/{name}");
+        if Path::new(&destination).exists() {
+            info(&format!("{name} is already installed"));
+            continue;
+        }
+
+        if !shell_exec(
+            &format!(
+                "git clone --depth 1 {} {}",
+                shell_quote(url),
+                shell_quote(&destination)
+            ),
+            false,
+            false,
+            &[("HOME", &home_dir())],
+        ) {
+            return false;
+        }
+    }
+
+    success("zsh plugins installed successfully");
+    true
+}
+
 fn install_fzf() -> bool {
     step("Installing fzf...");
     if command_exists("fzf") {
@@ -1170,7 +1240,12 @@ fn install_mise() -> bool {
     }
 
     if current_platform() == "linux" {
-        if install_packages(&["mise"], false, true) && get_mise_command().is_some() {
+        let pm = package_manager();
+        if pm != "apt"
+            && pm != "apk"
+            && install_packages(&["mise"], false, true)
+            && get_mise_command().is_some()
+        {
             success("mise installed successfully");
             return true;
         }
@@ -1178,7 +1253,7 @@ fn install_mise() -> bool {
         info("Installing mise with mise.run...");
         let install_path = format!("{}/.local/bin/mise", home_dir());
         let command = format!(
-            "HOME={} MISE_INSTALL_PATH={} MISE_INSTALL_HELP=0 curl -fsSL https://mise.run | sh",
+            "curl -fsSL https://mise.run | HOME={} MISE_INSTALL_PATH={} MISE_INSTALL_HELP=0 sh",
             shell_quote(&home_dir()),
             shell_quote(&install_path)
         );
@@ -1195,6 +1270,16 @@ fn install_mise() -> bool {
 
 fn install_node_with_mise() -> bool {
     step("Installing Node.js LTS with mise...");
+    if package_manager() == "apk" {
+        warn(
+            "Skipping Node.js LTS on Alpine: official Node.js LTS builds are glibc-based and mise may compile from source.",
+        );
+        info(
+            "Use `apk add nodejs npm` on Alpine, or run Better Shell on a glibc distro for mise-managed Node.js.",
+        );
+        return true;
+    }
+
     let Some(mise_command) = get_mise_command() else {
         error("mise is not installed");
         return false;
@@ -1634,6 +1719,68 @@ fn cancel() {
     println!("Cancelled");
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn strings(values: &[&str]) -> Vec<String> {
+        values.iter().map(|value| value.to_string()).collect()
+    }
+
+    #[test]
+    fn minimal_install_disables_optional_tools() {
+        let options = parse_install_options(&strings(&["--minimal", "--no-tmux"])).unwrap();
+
+        assert!(options.minimal);
+        assert!(!options.features.fonts);
+        assert!(!options.features.carapace);
+        assert!(!options.features.tmux);
+        assert!(options.features.mise);
+        assert!(options.features.node);
+    }
+
+    #[test]
+    fn disabling_mise_also_disables_node() {
+        let options = parse_install_options(&strings(&["--no-mise"])).unwrap();
+
+        assert!(!options.features.mise);
+        assert!(!options.features.node);
+    }
+
+    #[test]
+    fn rejects_unknown_install_options() {
+        let error = parse_install_options(&strings(&["--surprise"])).unwrap_err();
+
+        assert_eq!(error, "Unknown install option: --surprise");
+    }
+
+    #[test]
+    fn dry_run_plan_reflects_selected_features() {
+        let options = parse_install_options(&strings(&["--minimal", "--no-tmux"])).unwrap();
+        let steps = dry_run_steps(&options);
+
+        assert!(steps.contains(&"Install zsh"));
+        assert!(steps.contains(&"Install mise"));
+        assert!(!steps.contains(&"Install FiraCode Nerd Font"));
+        assert!(!steps.contains(&"Install carapace"));
+        assert!(!steps.contains(&"Install tmux"));
+    }
+
+    #[test]
+    fn shell_quote_escapes_single_quotes() {
+        assert_eq!(shell_quote("it's fine"), "'it'\\''s fine'");
+    }
+
+    #[test]
+    fn zshrc_loads_autosuggestions_with_completion_strategy() {
+        let template = zshrc_template();
+
+        assert!(template.contains("ZSH_AUTOSUGGEST_STRATEGY=(history completion)"));
+        assert!(template.contains("zsh-autosuggestions.zsh"));
+        assert!(template.contains("zsh-syntax-highlighting.zsh"));
+    }
+}
+
 fn zshrc_template() -> &'static str {
     r#"# Path to Oh My Zsh installation
 export ZSH="$HOME/.oh-my-zsh"
@@ -1648,6 +1795,10 @@ export DISABLE_AUTO_UPDATE=true
 HISTFILE=~/.zsh_history
 HISTSIZE=500000
 SAVEHIST=500000
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_DUPS
 
 # Keybindings
 bindkey -e
@@ -1678,8 +1829,26 @@ if command -v nvim &> /dev/null; then
   alias vim=nvim
 fi
 
+# zsh plugin configuration
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
+ZSH_AUTOSUGGEST_USE_ASYNC=true
+
+# Extra completions must be in fpath before compinit
+if [ -d "$HOME/.zsh/plugins/zsh-completions/src" ]; then
+  fpath=("$HOME/.zsh/plugins/zsh-completions/src" $fpath)
+fi
+
 # Auto-completion
 autoload -Uz compinit; compinit
+
+# Directory jumping
+[ -f "$HOME/.zsh/plugins/zsh-z/zsh-z.plugin.zsh" ] && source "$HOME/.zsh/plugins/zsh-z/zsh-z.plugin.zsh"
+
+# Auto-suggestions
+if [ -f "$HOME/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+  source "$HOME/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+fi
 
 # Carapace auto-completion (if installed)
 if command -v carapace &> /dev/null; then
@@ -1698,9 +1867,10 @@ bindkey "\eOF" end-of-line
 bindkey "^[b" backward-word
 bindkey "^[f" forward-word
 
-# Antigen plugin manager (load last for proper syntax highlighting)
-source $HOME/antigen.zsh
-antigen init ~/.antigenrc
+# Syntax highlighting must be loaded last
+if [ -f "$HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
+  source "$HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
 "#
 }
 

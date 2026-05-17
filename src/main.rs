@@ -6,7 +6,7 @@ use std::path::Path;
 use std::process::{Command, ExitCode, Stdio};
 use std::time::{SystemTime, UNIX_EPOCH};
 
-const VERSION: &str = "1.0.0";
+const VERSION: &str = "1.1.0";
 
 #[derive(Debug, Clone, Copy)]
 struct Features {

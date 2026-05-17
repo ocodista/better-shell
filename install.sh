@@ -19,7 +19,7 @@ case "$OS" in
   linux) OS="linux" ;;
   *)
     echo -e "${RED}❌ Unsupported OS: $OS${NC}"
-    echo "better-terminal supports macOS and Linux only"
+    echo "better-shell supports macOS and Linux only"
     exit 1
     ;;
 esac
@@ -71,6 +71,7 @@ else
 fi
 
 DOWNLOAD_URL="https://github.com/$REPO/releases/download/$VERSION/$BINARY_NAME"
+CHECKSUM_URL="$DOWNLOAD_URL.sha256"
 
 # Download binary
 TMP_DIR=$(mktemp -d)
@@ -87,12 +88,47 @@ fi
 chmod +x "$TMP_FILE"
 
 echo -e "${GREEN}✓${NC} Downloaded successfully"
+
+# Verify checksum when the release provides one
+if curl -fsSL "$CHECKSUM_URL" -o "$TMP_FILE.sha256" 2>/dev/null; then
+  EXPECTED_SHA=$(awk '{print $1}' "$TMP_FILE.sha256")
+
+  if command -v sha256sum >/dev/null 2>&1; then
+    ACTUAL_SHA=$(sha256sum "$TMP_FILE" | awk '{print $1}')
+  elif command -v shasum >/dev/null 2>&1; then
+    ACTUAL_SHA=$(shasum -a 256 "$TMP_FILE" | awk '{print $1}')
+  else
+    ACTUAL_SHA=""
+    echo -e "${BLUE}ℹ${NC} sha256sum/shasum not found; skipping checksum verification"
+  fi
+
+  if [ -n "$ACTUAL_SHA" ]; then
+    if [ "$EXPECTED_SHA" != "$ACTUAL_SHA" ]; then
+      echo -e "${RED}❌ Checksum verification failed${NC}"
+      echo "Expected: $EXPECTED_SHA"
+      echo "Actual:   $ACTUAL_SHA"
+      exit 1
+    fi
+    echo -e "${GREEN}✓${NC} Checksum verified"
+  fi
+else
+  echo -e "${BLUE}ℹ${NC} No checksum file found for $BINARY_NAME; skipping verification"
+fi
+
 echo ""
 
 # Run installation
 echo "Starting installation..."
 echo ""
-"$TMP_FILE" install
+if [ "$OS" = "linux" ] && [ "$(id -u)" -ne 0 ]; then
+  if ! command -v sudo >/dev/null 2>&1; then
+    echo -e "${RED}❌ Linux installation requires sudo${NC}"
+    exit 1
+  fi
+  sudo "$TMP_FILE" install
+else
+  "$TMP_FILE" install
+fi
 
 # Cleanup
 rm -rf "$TMP_DIR"

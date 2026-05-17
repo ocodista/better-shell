@@ -1,30 +1,26 @@
 #!/usr/bin/env bash
-# Start Ubuntu test container and keep it running for manual testing
+# Start Ubuntu test container and keep it running for manual testing.
 
-set -e
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "🐧 Starting Persistent Ubuntu Test Container"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Detect architecture
-ARCH=$(uname -m)
-if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
-    LINUX_BINARY="dist/better-shell-linux-arm64"
-else
-    LINUX_BINARY="dist/better-shell-linux-amd64"
-fi
+arch="$(uname -m)"
+case "$arch" in
+  arm64|aarch64) target_arch="arm64" ;;
+  x86_64|amd64) target_arch="amd64" ;;
+  *)
+    echo "Unsupported architecture: $arch" >&2
+    exit 1
+    ;;
+esac
 
-# Check if executable exists
-if [ ! -f "$LINUX_BINARY" ]; then
-    echo "❌ Linux executable not found ($LINUX_BINARY). Building all platforms..."
-    bun run build:all
-    ./tests/prepare-binaries.sh
-fi
-
-# Ensure Docker-compatible symlinks exist
-./tests/prepare-binaries.sh
+target_platform="linux/$target_arch"
 
 # Container name
 CONTAINER_NAME="better-shell-ubuntu-dev"
@@ -59,8 +55,14 @@ if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
     fi
 fi
 
-echo "📦 Building Ubuntu test container..."
-docker build -f tests/ubuntu/Dockerfile -t better-shell-ubuntu . -q
+echo "📦 Building Ubuntu test container ($target_platform)..."
+docker build \
+    --build-arg TARGETPLATFORM="$target_platform" \
+    --build-arg TARGETARCH="$target_arch" \
+    -f tests/ubuntu/Dockerfile \
+    -t better-shell-ubuntu \
+    . \
+    -q
 
 echo "🚀 Starting container in background..."
 docker run -d --name $CONTAINER_NAME better-shell-ubuntu tail -f /dev/null
@@ -68,23 +70,20 @@ docker run -d --name $CONTAINER_NAME better-shell-ubuntu tail -f /dev/null
 echo "⏳ Installing better-shell in container..."
 docker exec $CONTAINER_NAME sudo ./better-shell install
 
-echo "📋 Copying configs to testuser..."
+echo "📋 Ensuring testuser owns generated configs..."
 docker exec $CONTAINER_NAME bash -c '
-    sudo cp /root/.zshrc /home/testuser/
-    sudo cp /root/.antigenrc /home/testuser/
-    sudo cp /root/antigen.zsh /home/testuser/
-    sudo cp /root/.tmux.conf /home/testuser/
-    sudo cp -r /root/.config/eza /home/testuser/.config/ 2>/dev/null || true
-    sudo cp /root/.fzf.zsh /home/testuser/ 2>/dev/null || true
-    sudo cp -r /root/.fzf /home/testuser/ 2>/dev/null || true
-    sudo cp -r /root/.asdf /home/testuser/ 2>/dev/null || true
-    sudo cp /root/.tool-versions /home/testuser/ 2>/dev/null || true
-    sudo cp -r /root/.oh-my-zsh /home/testuser/ 2>/dev/null || true
-    sudo cp -r /root/.tmux /home/testuser/ 2>/dev/null || true
-    sudo chown -R testuser:testuser /home/testuser/.zshrc /home/testuser/.antigenrc /home/testuser/antigen.zsh /home/testuser/.tmux.conf /home/testuser/.config /home/testuser/.fzf.zsh /home/testuser/.fzf /home/testuser/.asdf /home/testuser/.tool-versions /home/testuser/.oh-my-zsh /home/testuser/.tmux 2>/dev/null || true
-    # Fix hardcoded /root paths
-    sudo sed -i "s|/root/|/home/testuser/|g" /home/testuser/.fzf.zsh 2>/dev/null || true
-    sudo sed -i "s|/root/|/home/testuser/|g" /home/testuser/.zshrc 2>/dev/null || true
+    sudo chown -R testuser:testuser \
+        /home/testuser/.zshrc \
+        /home/testuser/.antigenrc \
+        /home/testuser/antigen.zsh \
+        /home/testuser/.tmux.conf \
+        /home/testuser/.config \
+        /home/testuser/.fzf.zsh \
+        /home/testuser/.fzf \
+        /home/testuser/.local \
+        /home/testuser/.oh-my-zsh \
+        /home/testuser/.tmux \
+        2>/dev/null || true
 '
 
 echo ""
@@ -108,7 +107,7 @@ echo "  Ctrl+R           - Blazingly fast search with fzf"
 echo "  lsx              - List files with icons (eza)"
 echo "  z <dir>          - Jump to frequently used directories"
 echo "  tmux             - Start terminal multiplexer"
-echo "  node --version   - Check Node.js (via asdf)"
+echo "  node --version   - Check Node.js (via mise)"
 echo ""
 echo "To stop and remove the container:"
 echo "  docker rm -f $CONTAINER_NAME"

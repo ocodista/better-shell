@@ -1,34 +1,34 @@
 #!/usr/bin/env bash
-# Test better-shell on Alpine Linux
+# Test better-shell on Alpine Linux.
 
-set -e
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "🏔️  Testing better-shell on Alpine Linux 3.19"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Detect architecture
-ARCH=$(uname -m)
-if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
-    LINUX_BINARY="dist/better-shell-linux-arm64-musl"
-else
-    LINUX_BINARY="dist/better-shell-linux-amd64-musl"
-fi
+arch="$(uname -m)"
+case "$arch" in
+  arm64|aarch64) target_arch="arm64" ;;
+  x86_64|amd64) target_arch="amd64" ;;
+  *)
+    echo "Unsupported architecture: $arch" >&2
+    exit 1
+    ;;
+esac
 
-# Check if executable exists
-if [ ! -f "$LINUX_BINARY" ]; then
-    echo "❌ Linux executable not found ($LINUX_BINARY). Building all platforms..."
-    bun run build:all
-    # Prepare binaries with Docker-compatible names
-    ./tests/prepare-binaries.sh
-fi
+target_platform="linux/$target_arch"
 
-# Ensure Docker-compatible binary copies exist
-./tests/prepare-binaries.sh
-
-echo "📦 Building Alpine test container..."
-docker build -f tests/alpine/Dockerfile -t better-shell-alpine .
+echo "📦 Building Alpine test container ($target_platform)..."
+docker build \
+  --build-arg TARGETPLATFORM="$target_platform" \
+  --build-arg TARGETARCH="$target_arch" \
+  -f tests/alpine/Dockerfile \
+  -t better-shell-alpine \
+  .
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

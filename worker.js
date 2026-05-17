@@ -70,10 +70,13 @@ export default {
 </head>
 <body>
     <h1>better-shell</h1>
-    <p>One command to install a modern shell environment.</p>
+    <p>A terminal setup manager for zsh, fuzzy search, completions, mise, tmux, and backups.</p>
 
-    <h3>macOS / Linux</h3>
+    <h3>macOS</h3>
     <pre><code>curl -fsSL https://shell.ocodista.com/install.sh | bash</code></pre>
+
+    <h3>Linux</h3>
+    <pre><code>curl -fsSL https://shell.ocodista.com/install.sh | sudo bash</code></pre>
 
     <h3>Windows (PowerShell)</h3>
     <pre><code>irm https://shell.ocodista.com/install.ps1 | iex</code></pre>

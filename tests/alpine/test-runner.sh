@@ -43,11 +43,11 @@ echo "  → Checking tmux..."
 command -v tmux >/dev/null 2>&1 || { echo "❌ tmux not found"; exit 1; }
 echo "    ✓ tmux found: $(which tmux)"
 
-echo "  → Checking asdf..."
-if sudo test -d /root/.asdf || [ -d ~/.asdf ]; then
-  echo "    ✓ asdf directory found"
+echo "  → Checking mise..."
+if command -v mise >/dev/null 2>&1 || sudo test -f /root/.local/bin/mise || [ -f ~/.local/bin/mise ]; then
+  echo "    ✓ mise found"
 else
-  echo "❌ asdf not installed"
+  echo "❌ mise not installed"
   exit 1
 fi
 
@@ -100,6 +100,10 @@ echo ""
 echo "🚀 Testing zsh loads correctly..."
 zsh -c "echo 'Zsh interactive shell loaded successfully'" || { echo "❌ zsh failed to load"; exit 1; }
 echo "    ✓ zsh loads correctly"
+
+echo "  → Checking zsh autosuggestions..."
+zsh -ic '(( $+functions[_zsh_autosuggest_start] )) && [[ ${ZSH_AUTOSUGGEST_STRATEGY[*]} == *completion* ]]' >/dev/null 2>&1 || { echo "❌ zsh autosuggestions not loaded"; exit 1; }
+echo "    ✓ zsh autosuggestions loaded"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

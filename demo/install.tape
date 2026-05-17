@@ -40,7 +40,7 @@ Sleep 800ms
 Enter
 
 # 2. Installer runs visibly for a few seconds so the viewer can see it do
-#    its thing, then we hide while the long apt/git/bun work finishes off
+#    its thing, then we hide while the long apt/git/setup work finishes off
 #    camera. When Show resumes, the "Installation complete!" banner is
 #    already on screen — command → result transition in one beat.
 Sleep 6s

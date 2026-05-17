@@ -60,9 +60,9 @@ if [ $? -eq 0 ]; then
         echo "✗ FAILED"
     fi
 
-    # Test asdf
-    echo -n "  asdf: "
-    if docker exec $CONTAINER_NAME bash -c "source ~/.asdf/asdf.sh && asdf --version" > /dev/null 2>&1; then
+    # Test mise
+    echo -n "  mise: "
+    if docker exec $CONTAINER_NAME bash -c "~/.local/bin/mise --version || mise --version" > /dev/null 2>&1; then
         echo "✓"
     else
         echo "✗ FAILED"

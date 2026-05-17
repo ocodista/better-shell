@@ -44,7 +44,7 @@ if ($hasWSL2) {
     Write-Color ""
 
     # Run the bash installer in WSL
-    wsl bash -c "curl -fsSL https://shell.ocodista.com/install.sh | bash"
+    wsl bash -c "curl -fsSL https://shell.ocodista.com/install.sh | sudo bash"
 
     Write-Color ""
     Write-Color "✨ Installation complete!" "Green"
@@ -118,7 +118,7 @@ if ($choice -eq "2") {
     Write-Color ""
 
     # Install tools
-    $tools = @("fzf", "eza", "git")
+    $tools = @("fzf", "eza", "git", "mise")
 
     foreach ($tool in $tools) {
         Write-Color "Installing $tool..." "Cyan"
@@ -135,15 +135,23 @@ if ($choice -eq "2") {
 
     # Install PSReadLine for auto-suggestions
     try {
-        Install-Module -Name PSReadLine -Force -SkipPublisherCheck -AllowClobber
+        Install-Module -Name PSReadLine -Scope CurrentUser -Force -SkipPublisherCheck -AllowClobber
         Write-Color "✓ Installed PSReadLine (auto-suggestions)" "Green"
     } catch {
         Write-Color "⚠️  Failed to install PSReadLine" "Yellow"
     }
 
+    # Install PSFzf for fzf key bindings
+    try {
+        Install-Module -Name PSFzf -Scope CurrentUser -Force -SkipPublisherCheck -AllowClobber
+        Write-Color "✓ Installed PSFzf (fzf key bindings)" "Green"
+    } catch {
+        Write-Color "⚠️  Failed to install PSFzf" "Yellow"
+    }
+
     # Install posh-git for git integration
     try {
-        Install-Module -Name posh-git -Force -SkipPublisherCheck -AllowClobber
+        Install-Module -Name posh-git -Scope CurrentUser -Force -SkipPublisherCheck -AllowClobber
         Write-Color "✓ Installed posh-git" "Green"
     } catch {
         Write-Color "⚠️  Failed to install posh-git" "Yellow"
@@ -151,7 +159,7 @@ if ($choice -eq "2") {
 
     # Install Terminal-Icons
     try {
-        Install-Module -Name Terminal-Icons -Force -SkipPublisherCheck -AllowClobber
+        Install-Module -Name Terminal-Icons -Scope CurrentUser -Force -SkipPublisherCheck -AllowClobber
         Write-Color "✓ Installed Terminal-Icons" "Green"
     } catch {
         Write-Color "⚠️  Failed to install Terminal-Icons" "Yellow"
@@ -182,7 +190,15 @@ Set-Alias -Name ls -Value eza -Option AllScope -Force
 function lsx { eza -l -a --icons }
 
 # fzf integration
-Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory 'Ctrl+r'
+if (Get-Module -ListAvailable -Name PSFzf) {
+    Import-Module PSFzf
+    Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory 'Ctrl+r'
+}
+
+# mise version manager
+if (Get-Command mise -ErrorAction SilentlyContinue) {
+    (& mise activate pwsh) | Out-String | Invoke-Expression
+}
 
 # Oh My Posh (optional - install with: winget install JanDeDobbeleer.OhMyPosh)
 # oh-my-posh init pwsh | Invoke-Expression
@@ -217,8 +233,10 @@ Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory
     Write-Color "  ✓ fzf - Fuzzy finder (Ctrl+R)" "Green"
     Write-Color "  ✓ eza - Modern ls with icons" "Green"
     Write-Color "  ✓ PSReadLine - Auto-suggestions" "Green"
+    Write-Color "  ✓ PSFzf - fzf key bindings" "Green"
     Write-Color "  ✓ posh-git - Git integration" "Green"
     Write-Color "  ✓ Terminal-Icons - File icons" "Green"
+    Write-Color "  ✓ mise - Tool version manager" "Green"
     Write-Color ""
     Write-Color "Recommended:" "White"
     Write-Color "  • Windows Terminal (winget install Microsoft.WindowsTerminal)" "Cyan"

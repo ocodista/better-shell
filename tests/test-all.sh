@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-# Run all tests
+# Run all interactive Docker fixtures.
 
-set -e
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
 
 echo "🧪 better-shell Interactive Test Suite"
 echo ""
@@ -9,21 +11,7 @@ echo "This will open interactive shells in Docker containers."
 echo "You can manually test the installation in each environment."
 echo ""
 echo "Press Enter to continue, or Ctrl+C to cancel..."
-read
-
-# Detect architecture and build if needed
-ARCH=$(uname -m)
-if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
-    LINUX_BINARY="dist/better-shell-linux-arm64"
-else
-    LINUX_BINARY="dist/better-shell-linux-amd64"
-fi
-
-if [ ! -f "$LINUX_BINARY" ]; then
-    echo "📦 Building Linux executables..."
-    bun run build:all
-    echo ""
-fi
+read -r
 
 # Test Ubuntu
 echo ""
@@ -38,7 +26,7 @@ echo "✅ Ubuntu test completed"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "Press Enter to test Alpine..."
-read
+read -r
 
 # Test Alpine
 echo ""

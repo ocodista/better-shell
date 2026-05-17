@@ -1,0 +1,17 @@
+[package]
+name = "better-shell"
+version = "1.0.0"
+edition = "2024"
+description = "Terminal setup manager with zsh, Oh My Zsh, fzf, mise, tmux, and more"
+license = "MIT"
+publish = false
+
+[dependencies]
+dialoguer = "0.11"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

@@ -20,13 +20,13 @@ if [ "$(uname)" = "Linux" ] && [ "$EUID" -ne 0 ]; then
         sudo cp -r /root/.config/eza ~/.config/ 2>/dev/null || true
         sudo cp /root/.fzf.zsh ~/ 2>/dev/null || true
         sudo cp -r /root/.fzf ~/ 2>/dev/null || true
-        sudo cp -r /root/.asdf ~/ 2>/dev/null || true
-        sudo cp /root/.tool-versions ~/ 2>/dev/null || true
+        sudo cp -r /root/.local ~/ 2>/dev/null || true
+        sudo cp -r /root/.config/mise ~/.config/ 2>/dev/null || true
         sudo cp -r /root/.oh-my-zsh ~/ 2>/dev/null || true
         sudo cp -r /root/.tmux ~/ 2>/dev/null || true
 
         # Fix ownership
-        sudo chown -R $(id -u):$(id -g) ~/.zshrc ~/.antigenrc ~/antigen.zsh ~/.tmux.conf ~/.config/eza ~/.fzf.zsh ~/.fzf ~/.asdf ~/.tool-versions ~/.oh-my-zsh ~/.tmux 2>/dev/null || true
+        sudo chown -R $(id -u):$(id -g) ~/.zshrc ~/.antigenrc ~/antigen.zsh ~/.tmux.conf ~/.config/eza ~/.config/mise ~/.fzf.zsh ~/.fzf ~/.local ~/.oh-my-zsh ~/.tmux 2>/dev/null || true
 
         # Fix hardcoded /root paths to use $HOME
         sed -i 's|/root/|$HOME/|g' ~/.fzf.zsh 2>/dev/null || true
@@ -50,7 +50,7 @@ if [ $? -eq 0 ] || [ -f ~/.zshrc ]; then
     echo "  lsx              - List files with icons (eza)"
     echo "  z <dir>          - Jump to frequently used directories"
     echo "  tmux             - Start terminal multiplexer"
-    echo "  node --version   - Check Node.js (via asdf)"
+    echo "  node --version   - Check Node.js (via mise)"
     echo "  exit             - Leave the improved shell"
     echo ""
 

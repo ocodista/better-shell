@@ -16,6 +16,8 @@
     "dev": "bun --watch src/index.ts",
     "build": "bun run build.ts",
     "build:all": "bun run build.ts --all",
+    "build:rust": "cargo build --release --manifest-path rust-cli/Cargo.toml",
+    "compare:cli": "bun run scripts/compare-cli.ts",
     "deploy:prod": "wrangler deploy --env production",
     "test": "bun test",
     "test:unit": "bun test",

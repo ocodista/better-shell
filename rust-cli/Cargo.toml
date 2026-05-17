@@ -1,0 +1,14 @@
+[package]
+name = "better-shell-rust"
+version = "0.1.0"
+edition = "2024"
+description = "Experimental Rust prototype for Better Shell CLI size and startup comparisons"
+license = "MIT"
+publish = false
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

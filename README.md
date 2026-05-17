@@ -140,6 +140,8 @@ Useful commands:
 ```bash
 bun test                         # Unit tests
 bun run build:all                # Build release binaries and checksums
+bun run build:rust               # Build experimental Rust prototype
+bun run compare:cli              # Generate reports/cli-comparison.html
 bun run test:quick               # Fast container smoke test
 bun run test:integration         # Ubuntu and Alpine integration tests
 bun run deploy:prod              # Deploy shell.ocodista.com worker

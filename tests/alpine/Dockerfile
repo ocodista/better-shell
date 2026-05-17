@@ -7,19 +7,18 @@ FROM --platform=$TARGETPLATFORM alpine:3.19
 # Build args for platform detection
 ARG TARGETARCH
 
-# Install base dependencies
+# Install only the tools needed to run the integration fixture.
+# The installer itself installs zsh, tmux, mise, eza, fzf, and other managed tools.
 RUN apk add --no-cache \
+    bash \
+    ca-certificates \
     curl \
     git \
-    bash \
-    unzip \
-    build-base \
-    linux-headers \
-    sudo \
-    vim \
-    shadow \
     gcompat \
-    libstdc++
+    libstdc++ \
+    shadow \
+    sudo \
+    unzip
 
 # Create a test user
 RUN adduser -D -s /bin/bash testuser && \

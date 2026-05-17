@@ -10,14 +10,14 @@ ARG TARGETARCH
 # Avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install base dependencies
-RUN apt-get update && apt-get install -y \
+# Install only the tools needed to run the integration fixture.
+# The installer itself installs zsh, tmux, mise, eza, fzf, and other managed tools.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
     curl \
     git \
-    unzip \
-    build-essential \
     sudo \
-    vim \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a test user (better-shell shouldn't run as root)

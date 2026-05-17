@@ -1,5 +1,7 @@
 # Alpine test environment for better-shell
-# Use platform-specific image
+# Defaults keep the Dockerfile compatible with the legacy Docker builder.
+ARG TARGETPLATFORM=linux/amd64
+ARG TARGETARCH=amd64
 FROM --platform=$TARGETPLATFORM alpine:3.19
 
 # Build args for platform detection

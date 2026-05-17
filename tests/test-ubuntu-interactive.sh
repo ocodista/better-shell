@@ -11,10 +11,13 @@ echo ""
 # Detect architecture
 ARCH=$(uname -m)
 if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
+    TARGETARCH="arm64"
     LINUX_BINARY="dist/better-shell-linux-arm64"
 else
+    TARGETARCH="amd64"
     LINUX_BINARY="dist/better-shell-linux-amd64"
 fi
+TARGETPLATFORM="linux/$TARGETARCH"
 
 # Check if executable exists
 if [ ! -f "$LINUX_BINARY" ]; then
@@ -59,8 +62,14 @@ if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
     fi
 fi
 
-echo "📦 Building Ubuntu test container..."
-docker build -f tests/ubuntu/Dockerfile -t better-shell-ubuntu . -q
+echo "📦 Building Ubuntu test container ($TARGETPLATFORM)..."
+docker build \
+    --build-arg TARGETPLATFORM="$TARGETPLATFORM" \
+    --build-arg TARGETARCH="$TARGETARCH" \
+    -f tests/ubuntu/Dockerfile \
+    -t better-shell-ubuntu \
+    . \
+    -q
 
 echo "🚀 Starting container in background..."
 docker run -d --name $CONTAINER_NAME better-shell-ubuntu tail -f /dev/null
@@ -68,23 +77,20 @@ docker run -d --name $CONTAINER_NAME better-shell-ubuntu tail -f /dev/null
 echo "⏳ Installing better-shell in container..."
 docker exec $CONTAINER_NAME sudo ./better-shell install
 
-echo "📋 Copying configs to testuser..."
+echo "📋 Ensuring testuser owns generated configs..."
 docker exec $CONTAINER_NAME bash -c '
-    sudo cp /root/.zshrc /home/testuser/
-    sudo cp /root/.antigenrc /home/testuser/
-    sudo cp /root/antigen.zsh /home/testuser/
-    sudo cp /root/.tmux.conf /home/testuser/
-    sudo cp -r /root/.config/eza /home/testuser/.config/ 2>/dev/null || true
-    sudo cp /root/.fzf.zsh /home/testuser/ 2>/dev/null || true
-    sudo cp -r /root/.fzf /home/testuser/ 2>/dev/null || true
-    sudo cp -r /root/.local /home/testuser/ 2>/dev/null || true
-    sudo cp -r /root/.config/mise /home/testuser/.config/ 2>/dev/null || true
-    sudo cp -r /root/.oh-my-zsh /home/testuser/ 2>/dev/null || true
-    sudo cp -r /root/.tmux /home/testuser/ 2>/dev/null || true
-    sudo chown -R testuser:testuser /home/testuser/.zshrc /home/testuser/.antigenrc /home/testuser/antigen.zsh /home/testuser/.tmux.conf /home/testuser/.config /home/testuser/.fzf.zsh /home/testuser/.fzf /home/testuser/.local /home/testuser/.oh-my-zsh /home/testuser/.tmux 2>/dev/null || true
-    # Fix hardcoded /root paths
-    sudo sed -i "s|/root/|/home/testuser/|g" /home/testuser/.fzf.zsh 2>/dev/null || true
-    sudo sed -i "s|/root/|/home/testuser/|g" /home/testuser/.zshrc 2>/dev/null || true
+    sudo chown -R testuser:testuser \
+        /home/testuser/.zshrc \
+        /home/testuser/.antigenrc \
+        /home/testuser/antigen.zsh \
+        /home/testuser/.tmux.conf \
+        /home/testuser/.config \
+        /home/testuser/.fzf.zsh \
+        /home/testuser/.fzf \
+        /home/testuser/.local \
+        /home/testuser/.oh-my-zsh \
+        /home/testuser/.tmux \
+        2>/dev/null || true
 '
 
 echo ""

@@ -1,0 +1,20 @@
+.git
+.github
+.pi
+.wrangler
+node_modules
+demo
+coverage
+out
+logs
+.cache
+.DS_Store
+*.log
+*.lcov
+*.tsbuildinfo
+.env
+.env.*
+
+# Keep only Linux release binaries needed by Docker tests.
+dist/*
+!dist/better-shell-linux-*

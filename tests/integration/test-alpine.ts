@@ -1,16 +1,19 @@
 /**
- * Automated integration test for Alpine
- * Builds Docker container, runs installation, verifies everything works
+ * Automated integration test for Alpine.
+ * Builds Docker container, runs installation, verifies everything works.
  */
 
 import { $ } from 'bun';
+
+const targetArch = process.arch === 'arm64' ? 'arm64' : 'amd64';
+const targetPlatform = `linux/${targetArch}`;
 
 console.log('🧪 Running Alpine Integration Test\n');
 
 try {
   // Build Docker image
-  console.log('📦 Building Alpine test container...');
-  await $`docker build -f tests/alpine/Dockerfile -t better-shell-alpine-test . -q`;
+  console.log(`📦 Building Alpine test container (${targetPlatform})...`);
+  await $`docker build --build-arg TARGETPLATFORM=${targetPlatform} --build-arg TARGETARCH=${targetArch} -f tests/alpine/Dockerfile -t better-shell-alpine-test . -q`;
   console.log('✓ Container built\n');
 
   // Run automated tests

@@ -1,16 +1,19 @@
 /**
- * Automated integration test for Ubuntu
- * Builds Docker container, runs installation, verifies everything works
+ * Automated integration test for Ubuntu.
+ * Builds Docker container, runs installation, verifies everything works.
  */
 
 import { $ } from 'bun';
+
+const targetArch = process.arch === 'arm64' ? 'arm64' : 'amd64';
+const targetPlatform = `linux/${targetArch}`;
 
 console.log('🧪 Running Ubuntu Integration Test\n');
 
 try {
   // Build Docker image
-  console.log('📦 Building Ubuntu test container...');
-  await $`docker build -f tests/ubuntu/Dockerfile -t better-shell-ubuntu-test . -q`;
+  console.log(`📦 Building Ubuntu test container (${targetPlatform})...`);
+  await $`docker build --build-arg TARGETPLATFORM=${targetPlatform} --build-arg TARGETARCH=${targetArch} -f tests/ubuntu/Dockerfile -t better-shell-ubuntu-test . -q`;
   console.log('✓ Container built\n');
 
   // Run automated tests

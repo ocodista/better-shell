@@ -30,16 +30,16 @@
 <body>
   <main>
     <section class="hero">
-      <span class="pill">Generated 2026-05-17T01:25:34.321Z</span>
+      <span class="pill">Generated 2026-05-17T01:35:46.039Z</span>
       <h1>Better Shell CLI comparison</h1>
-      <p>Bun standalone vs. experimental Rust prototype. Benchmarks run 25 times after 5 warmups on this machine.</p>
+      <p>Bun standalone vs. experimental Rust native implementation. Benchmarks run 25 times after 5 warmups on this machine.</p>
     </section>
 
     <section class="card">
       <h2>Summary</h2>
-      <ul><li><strong>Bun standalone</strong>: 54.84 MB binary, 21.38 ms avg startup.</li>
-<li><strong>Rust prototype</strong>: 329.9 KB binary, 1.53 ms avg startup.</li></ul>
-      <p class="note">The Rust CLI is a feature-limited prototype. The Bun CLI remains the production implementation with the full TUI and installer.</p>
+      <ul><li><strong>Bun standalone</strong>: 54.84 MB binary, 22.15 ms avg startup.</li>
+<li><strong>Rust native</strong>: 428.3 KB binary, 1.64 ms avg startup.</li></ul>
+      <p class="note">The Rust CLI now mirrors the main user-facing commands and installer flow. Bun remains the default production implementation while the Rust port is evaluated.</p>
     </section>
 
     <section class="card">
@@ -50,15 +50,15 @@
         <td>Bun standalone</td>
         <td><code>./dist/better-shell</code></td>
         <td>54.84 MB</td>
-        <td>170.2×</td>
+        <td>131.1×</td>
         <td><div class="bar"><span style="width:100.0%"></span></div></td>
       </tr>
 <tr>
-        <td>Rust prototype</td>
+        <td>Rust native</td>
         <td><code>./rust-cli/target/release/better-shell-rust</code></td>
-        <td>329.9 KB</td>
+        <td>428.3 KB</td>
         <td>1.0×</td>
-        <td><div class="bar"><span style="width:0.6%"></span></div></td>
+        <td><div class="bar"><span style="width:0.8%"></span></div></td>
       </tr></tbody>
       </table>
     </section>
@@ -70,19 +70,19 @@
           <thead><tr><th>CLI</th><th>Average</th><th>Min</th><th>Max</th><th>Relative</th><th></th></tr></thead>
           <tbody><tr>
             <td>Bun standalone</td>
-            <td>21.38 ms</td>
+            <td>22.15 ms</td>
             <td>20.17 ms</td>
-            <td>22.65 ms</td>
-            <td>14.0×</td>
+            <td>29.19 ms</td>
+            <td>13.5×</td>
             <td><div class="bar"><span style="width:95.8%"></span></div></td>
           </tr>
 <tr>
-            <td>Rust prototype</td>
-            <td>1.53 ms</td>
-            <td>1.43 ms</td>
-            <td>1.65 ms</td>
+            <td>Rust native</td>
+            <td>1.64 ms</td>
+            <td>1.48 ms</td>
+            <td>2.02 ms</td>
             <td>1.0×</td>
-            <td><div class="bar"><span style="width:6.8%"></span></div></td>
+            <td><div class="bar"><span style="width:7.1%"></span></div></td>
           </tr></tbody>
         </table>
       </section>
@@ -93,19 +93,19 @@
           <thead><tr><th>CLI</th><th>Average</th><th>Min</th><th>Max</th><th>Relative</th><th></th></tr></thead>
           <tbody><tr>
             <td>Bun standalone</td>
-            <td>21.11 ms</td>
-            <td>20.19 ms</td>
-            <td>22.36 ms</td>
-            <td>14.1×</td>
-            <td><div class="bar"><span style="width:94.6%"></span></div></td>
+            <td>23.11 ms</td>
+            <td>20.65 ms</td>
+            <td>29.23 ms</td>
+            <td>15.2×</td>
+            <td><div class="bar"><span style="width:100.0%"></span></div></td>
           </tr>
 <tr>
-            <td>Rust prototype</td>
-            <td>1.49 ms</td>
-            <td>1.42 ms</td>
-            <td>1.73 ms</td>
+            <td>Rust native</td>
+            <td>1.52 ms</td>
+            <td>1.47 ms</td>
+            <td>1.62 ms</td>
             <td>1.0×</td>
-            <td><div class="bar"><span style="width:6.7%"></span></div></td>
+            <td><div class="bar"><span style="width:6.6%"></span></div></td>
           </tr></tbody>
         </table>
       </section>
@@ -116,19 +116,19 @@
           <thead><tr><th>CLI</th><th>Average</th><th>Min</th><th>Max</th><th>Relative</th><th></th></tr></thead>
           <tbody><tr>
             <td>Bun standalone</td>
-            <td>22.32 ms</td>
-            <td>20.52 ms</td>
-            <td>24.49 ms</td>
-            <td>14.7×</td>
-            <td><div class="bar"><span style="width:100.0%"></span></div></td>
+            <td>20.53 ms</td>
+            <td>20.18 ms</td>
+            <td>20.94 ms</td>
+            <td>4.1×</td>
+            <td><div class="bar"><span style="width:88.9%"></span></div></td>
           </tr>
 <tr>
-            <td>Rust prototype</td>
-            <td>1.52 ms</td>
-            <td>1.43 ms</td>
-            <td>1.97 ms</td>
+            <td>Rust native</td>
+            <td>5.01 ms</td>
+            <td>4.92 ms</td>
+            <td>5.31 ms</td>
             <td>1.0×</td>
-            <td><div class="bar"><span style="width:6.8%"></span></div></td>
+            <td><div class="bar"><span style="width:21.7%"></span></div></td>
           </tr></tbody>
         </table>
       </section>

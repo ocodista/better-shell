@@ -127,6 +127,8 @@ It saves backups to `~/.better-shell-backups/YYYY-MM-DD-HHMMSS` before writing n
 
 Built with [Bun](https://bun.sh), TypeScript, and [@clack/prompts](https://github.com/bombshell-dev/clack).
 
+An experimental Rust port lives in `rust-cli/`. It mirrors the user-facing CLI surface (`manage`, `configure`, `install`, `check`, `backup`, and `restore`) so the project can compare Bun's standalone binary with a smaller native implementation before deciding whether to migrate.
+
 ```bash
 git clone https://github.com/ocodista/better-shell.git
 cd better-shell

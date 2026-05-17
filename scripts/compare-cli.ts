@@ -41,7 +41,7 @@ const clis: CliBuild[] = [
     buildCommand: ['bun', 'run', 'build'],
   },
   {
-    name: 'Rust prototype',
+    name: 'Rust native',
     path: './rust-cli/target/release/better-shell-rust',
     buildCommand: ['cargo', 'build', '--release', '--manifest-path', 'rust-cli/Cargo.toml'],
   },
@@ -213,13 +213,13 @@ const createHtml = (reports: CliReport[]): string => {
     <section class="hero">
       <span class="pill">Generated ${escapeHtml(generatedAt)}</span>
       <h1>Better Shell CLI comparison</h1>
-      <p>Bun standalone vs. experimental Rust prototype. Benchmarks run ${runs} times after ${warmups} warmups on this machine.</p>
+      <p>Bun standalone vs. experimental Rust native implementation. Benchmarks run ${runs} times after ${warmups} warmups on this machine.</p>
     </section>
 
     <section class="card">
       <h2>Summary</h2>
       <ul>${summary}</ul>
-      <p class="note">The Rust CLI is a feature-limited prototype. The Bun CLI remains the production implementation with the full TUI and installer.</p>
+      <p class="note">The Rust CLI now mirrors the main user-facing commands and installer flow. Bun remains the default production implementation while the Rust port is evaluated.</p>
     </section>
 
     <section class="card">
